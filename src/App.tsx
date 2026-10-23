@@ -1,4 +1,4 @@
-import { useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { createGame, load, move, truckCount, won, type Direction, type Game, type Scene } from './game';
 
 const arrows: Record<Direction, string> = { up: '↑', left: '←', down: '↓', right: '→' };
@@ -10,7 +10,24 @@ export default function App() {
   const [selected, setSelected] = useState<string | null>('cash-2');
   const [message, setMessage] = useState('Válassz egy autót vagy raklapot, és mozgasd a nyilakkal.');
   const [showHelp, setShowHelp] = useState(false);
-  const gesture = useRef<{ x: number; y: number; id: string } | null>(null);
+  const board = useRef<HTMLDivElement>(null);
+  const gesture = useRef<{ x: number; y: number; id: string; pointerId: number; axis: 'horizontal' | 'vertical' | 'both' } | null>(null);
+
+  useEffect(() => {
+    const element = board.current;
+    if (!element) return;
+    // React's touch listeners are passive. Native non-passive listeners also
+    // reserve board gestures on mobile Safari, including touches on empty cells.
+    const preventBoardScroll = (event: TouchEvent) => {
+      if (event.cancelable) event.preventDefault();
+    };
+    element.addEventListener('touchstart', preventBoardScroll, { passive: false });
+    element.addEventListener('touchmove', preventBoardScroll, { passive: false });
+    return () => {
+      element.removeEventListener('touchstart', preventBoardScroll);
+      element.removeEventListener('touchmove', preventBoardScroll);
+    };
+  }, []);
   const game = history[history.length - 1];
   const active = game[scene].find((piece) => piece.id === selected);
   const completed = won(game);
@@ -72,7 +89,7 @@ export default function App() {
         <section className={`scene ${scene}`} aria-label={scene === 'garage' ? 'Garázs játéktér' : 'Platós autó játéktér'}>
           <div className="scene-label"><span>{scene === 'garage' ? 'PRIVÁT GARÁZS' : 'ÁDÁM • KÉSZEN ÁLL'}</span><span>{scene === 'garage' ? '↓ KIJÁRAT ALUL' : '8 RAKLAP A CÉL'}</span></div>
           {scene === 'truck' && <div className="truck-cab" aria-hidden="true"><span>ÁDÁM</span><div className="windshield" /><span>🚚</span></div>}
-          <div className={`board ${scene}`} role="group" aria-label={scene === 'garage' ? 'Garázs, 6 × 6 mező' : 'Plató, 4 × 4 mező'}>
+          <div ref={board} className={`board ${scene}`} role="group" aria-label={scene === 'garage' ? 'Garázs, 6 × 6 mező' : 'Plató, 4 × 4 mező'}>
             {game[scene].map((piece) => <button
               key={piece.id}
               className={`piece ${piece.kind} ${piece.color} ${piece.h > piece.w ? 'vertical' : ''} ${selected === piece.id ? 'selected' : ''}`}
@@ -80,14 +97,25 @@ export default function App() {
               aria-label={`${piece.label}, ${piece.y + 1}. sor, ${piece.x + 1}. oszlop`}
               aria-pressed={selected === piece.id}
               onClick={() => setSelected(piece.id)}
-              onPointerDown={(event) => { gesture.current = { x: event.clientX, y: event.clientY, id: piece.id }; event.currentTarget.setPointerCapture?.(event.pointerId); setSelected(piece.id); }}
-              onPointerCancel={() => { gesture.current = null; }}
+              onPointerDown={(event) => {
+                if (!event.isPrimary || event.button !== 0) return;
+                gesture.current = { x: event.clientX, y: event.clientY, id: piece.id, pointerId: event.pointerId, axis: piece.axis };
+                event.currentTarget.setPointerCapture?.(event.pointerId);
+                setSelected(piece.id);
+              }}
+              onPointerMove={(event) => {
+                if (gesture.current?.pointerId === event.pointerId && event.cancelable) event.preventDefault();
+              }}
+              onPointerCancel={(event) => { if (gesture.current?.pointerId === event.pointerId) gesture.current = null; }}
+              onLostPointerCapture={(event) => { if (gesture.current?.pointerId === event.pointerId) gesture.current = null; }}
               onPointerUp={(event) => {
-                const start = gesture.current; gesture.current = null;
-                if (!start) return;
+                const start = gesture.current;
+                if (!start || start.pointerId !== event.pointerId) return;
+                gesture.current = null;
                 const dx = event.clientX - start.x, dy = event.clientY - start.y;
-                if (Math.max(Math.abs(dx), Math.abs(dy)) < 24) return;
-                step(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'), start.id);
+                const horizontal = start.axis === 'horizontal' || (start.axis === 'both' && Math.abs(dx) > Math.abs(dy));
+                if (Math.abs(horizontal ? dx : dy) < 18) return;
+                step(horizontal ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'), start.id);
               }}
             >
               {piece.kind === 'cash' ? <><span className="banknotes" aria-hidden="true">$</span><span className="piece-label">{piece.id.startsWith('truck') ? 'PÉNZ' : `0${piece.id.split('-')[1]}`}</span></> : <><span className="car-window" aria-hidden="true" /><span className="piece-label">{piece.label}</span><span className="car-lights" aria-hidden="true" /></>}

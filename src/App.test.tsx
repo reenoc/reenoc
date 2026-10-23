@@ -1,9 +1,19 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import App from './App';
 
 describe('MTCSY játékfelület', () => {
+  it('a pályán kezdett érintés nem görgeti az oldalt, a pályán kívül szabad a görgetés', () => {
+    render(<App />);
+    const board = screen.getByRole('group', { name: 'Garázs, 6 × 6 mező' });
+    const car = screen.getByRole('button', { name: 'Ferrari, 3. sor, 5. oszlop' });
+    expect(fireEvent.touchStart(car, { cancelable: true })).toBe(false);
+    expect(fireEvent.touchMove(car, { cancelable: true })).toBe(false);
+    expect(fireEvent.touchMove(board, { cancelable: true })).toBe(false);
+    expect(fireEvent.touchMove(screen.getByRole('heading', { level: 1 }), { cancelable: true })).toBe(true);
+  });
+
   it('egy kiválasztott raklapot billentyűzettel mozgat, és visszavonja a lépést', async () => {
     const user = userEvent.setup();
     render(<App />);
