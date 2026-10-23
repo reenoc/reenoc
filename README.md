@@ -73,6 +73,8 @@ A `dist/` statikus kimenetét a `gh-pages` ág gyökerére kell publikálni, `.n
 
 ## Szerkezet
 
+Telefonon a történet a teljes rendelkezésre álló képernyőt kitölti, a pálya szélesebb, a fejléc tömörebb. A `viewport-fit=cover`, a `100dvh` és a safe-area térközök követik a Safari változó magasságát, a kamerakivágást és az alsó gesztussávot; a nagyítás továbbra is engedélyezett.
+
 - `src/StoryDialog.tsx`: eredeti magyar történet három retró jelenettel (garázs, kikötő, hajóindulás), pixelgrafikával és betűnkénti kiírással. Koppintással gyorsítható, átugorható, a fejléc Történet gombjával újraolvasható. Csökkentett mozgásnál a teljes szöveg azonnal látszik; a párbeszédablak alatt a játék nem vezérelhető.
 - `src/game.ts`: mozgás, ütközések, felrakodás és dokkolási győzelmi feltétel.
 - `src/levels.json`: a két pálya kiinduló elrendezése.

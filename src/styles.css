@@ -57,3 +57,83 @@
 @media(max-width:360px) { .story-backdrop { padding:16px 12px; } .story-heading { padding:17px 15px 14px; } .story-topline { padding:8px 12px; font-size:8px; } .story-dialogue { margin:0 12px; } .story-copy { font-size:11px; padding:12px; } .story-navigation { padding:15px 12px 0; } .story-next { font-size:10px; padding:10px 12px; } .story-location { font-size:7px; left:8px; top:8px; } .header-actions { gap:7px; } }
 @media(max-height:650px) { .story-backdrop { padding-top:12px; padding-bottom:12px; } .story-art { max-height:125px; } .story-scene { margin-top:-20px; } .story-heading { padding-top:14px; padding-bottom:12px; } .story-heading h2 { font-size:26px; } .story-copy { min-height:110px; } }
 @media(prefers-reduced-motion:reduce) { .story-cursor { animation:none; } }
+
+/* Fill the phone viewport while keeping content clear of the camera and home indicator. */
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}
+@media (max-width:639px) {
+  .game-shell {
+    width:100%; max-width:none;
+    padding:var(--safe-top) max(10px, var(--safe-right)) var(--safe-bottom) max(10px, var(--safe-left));
+    box-shadow:none;
+  }
+  .game-shell .topbar { padding:8px 0; }
+  .game-shell .brand-mark { width:36px; height:36px; font-size:21px; }
+  .game-shell .brand { gap:9px; }
+  .game-shell .brand strong { font-size:18px; }
+  .game-shell .icon-button { width:44px; height:44px; }
+  .story-replay { min-height:44px; padding:9px 11px; font-size:11px; }
+  .game-shell .level-line, .campaign-route, .port-route { display:none; }
+  .game-shell h1 { font-size:26px; margin:12px 0 5px; }
+  .game-shell .intro { font-size:11px; line-height:1.5; margin:0 0 10px; }
+  .level-buttons { margin-bottom:10px; }
+  .level-buttons button { padding:8px 11px; min-height:44px; }
+  .game-shell .stats { padding:8px 0; margin-bottom:10px; }
+  .game-shell .stats strong { font-size:23px; line-height:26px; margin-top:3px; }
+  .game-shell .stats>div { padding-left:12px; }
+  .scene-tabs { margin-bottom:8px; }
+  .scene-tabs button { min-height:40px; }
+  .scene { padding:7px 5px 0; }
+  .scene-label { margin-bottom:8px; font-size:7px; letter-spacing:.65px; }
+  .board { gap:4px; padding:4px; }
+  .queue-line { margin:8px 0 10px; }
+  .controls { padding:10px 12px; }
+  .dpad { grid-template-columns:repeat(3,44px); grid-template-rows:repeat(2,44px); }
+  .selection { min-width:0; }
+  .selection strong { max-width:none; font-size:12px; overflow-wrap:anywhere; }
+  .selection small { display:block; font-size:8px; line-height:1.5; }
+  .game-shell .port-brief { padding:8px 10px; margin-bottom:10px; }
+  .port-controls { padding:10px; }
+  .port-lift { min-height:44px; }
+  .port-legend { padding:8px 0 10px; }
+  .bottom-actions button { min-height:44px; }
+  .story-backdrop { display:block; padding:0; }
+  .story-window {
+    width:100%; min-height:100dvh; margin:0;
+    display:flex; flex-direction:column;
+    padding:var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
+    border:0; outline:0; box-shadow:none;
+  }
+  .story-topline { padding:8px 18px; flex-shrink:0; }
+  .story-skip { min-height:44px; font-size:11px; }
+  .story-art { flex-shrink:0; }
+  .story-scene { margin-top:0; }
+  .story-heading { padding:20px 20px 18px; flex-shrink:0; }
+  .story-heading h2 { font-size:clamp(29px,8vw,37px); }
+  .story-heading p { font-size:11px; max-width:none; }
+  .story-dialogue { flex:1 0 auto; display:flex; flex-direction:column; margin:0 14px; }
+  .story-portrait { width:44px; height:50px; }
+  .story-speaker strong { font-size:14px; }
+  .story-copy { flex:1; align-content:start; font-size:14px; line-height:1.8; min-height:160px; padding:16px; }
+  .story-navigation { padding:18px 16px 0; flex-shrink:0; }
+  .story-next { min-height:48px; font-size:12px; padding:12px 16px; }
+  .story-hint { flex-shrink:0; margin:17px 12px; font-size:8px; }
+}
+@media (max-width:639px) and (max-height:740px) {
+  .story-art { max-height:140px; }
+  .story-scene { margin-top:-12px; }
+  .story-heading { padding:14px 18px; }
+  .story-heading h2 { font-size:28px; }
+  .story-copy { min-height:130px; font-size:13px; line-height:1.7; }
+  .story-navigation { padding-top:14px; }
+  .story-hint { margin:13px 10px; font-size:7px; }
+}
+@media (pointer:coarse) and (orientation:landscape) and (min-width:640px) {
+  body { padding:0; }
+  .game-shell { padding-top:var(--safe-top); padding-bottom:var(--safe-bottom); border-radius:0; }
+  .story-backdrop { padding:max(12px, var(--safe-top)) max(16px, var(--safe-right)) max(12px, var(--safe-bottom)) max(16px, var(--safe-left)); }
+}
