@@ -14,8 +14,8 @@ export default function App() {
   const [selected, setSelected] = useState<string | null>(null);
   const [message, setMessage] = useState('Kilenc autó zárja el az utat. Előbb nyisd meg a szűk kijáratot.');
   const [showHelp, setShowHelp] = useState(false);
-  const [storyOpen, setStoryOpen] = useState(() => new URLSearchParams(window.location.search).get('stage') !== 'port');
-  const [portSession, setPortSession] = useState<{ cargo?: Piece[]; practice: boolean } | null>(() => new URLSearchParams(window.location.search).get('stage') === 'port' ? { practice: true } : null);
+  const [storyOpen, setStoryOpen] = useState(true);
+  const [portSession, setPortSession] = useState<Piece[] | null>(null);
   const inPort = portSession !== null;
   const board = useRef<HTMLDivElement>(null);
   const storyTrigger = useRef<HTMLButtonElement>(null);
@@ -63,24 +63,30 @@ export default function App() {
     gesture.current = null; setHistory([createGame(nextLevel)]); setScene('garage'); setSelected(null);
     setMessage('Új próbálkozás. Nyisd meg a kijáratot, majd rendezd el mind a nyolc raklapot.');
   }
+  function startPort() {
+    if (!won(game)) return;
+    gesture.current = null;
+    window.scrollTo(0, 0);
+    setPortSession(game.truck.filter(piece => piece.kind === 'cash'));
+  }
   function onKeyDown(event: KeyboardEvent) {
     if (storyOpen) return;
     const keys: Record<string, Direction> = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right' };
     if (keys[event.key] && selected) { event.preventDefault(); step(keys[event.key]); }
   }
-  if (portSession) return <PortGame cargo={portSession.cargo} practice={portSession.practice} campaignMoves={game.moves} onBack={() => setPortSession(null)} />;
+  if (portSession) return <PortGame cargo={portSession} campaignMoves={game.moves} />;
   const occupied = (x: number, y: number) => game.truck.some(p => x >= p.x && x < p.x + p.w && y >= p.y && y < p.y + p.h);
   return <div className="game-shell" onKeyDown={onKeyDown} inert={storyOpen}>
     {storyOpen && <StoryDialog chapter="garage" returnFocus={storyTrigger.current} onClose={() => setStoryOpen(false)} />}
     <header className="topbar"><div className="brand"><span className="brand-mark" aria-hidden="true">M<span>//</span></span><div><strong>MTCSY</strong><span>GOLDEN GARAGE</span></div></div><div className="header-actions"><button ref={storyTrigger} className="story-replay" onClick={() => setStoryOpen(true)}>Történet</button><button className="icon-button" aria-label="Játékszabályok" aria-expanded={showHelp} onClick={() => setShowHelp(!showHelp)}>?</button></div></header>
     <main>
-      <div className="level-line"><span className="level-tag">{level.name}</span><span className="difficulty"><i /><i /><i /> {game.level === 'expert' ? 'PROFI' : 'NEHÉZ'}</span></div>
+      <div className="level-line"><span className="level-tag">1. SZINT / {level.name.split(' / ')[1]}</span><span className="difficulty"><i /><i /><i /> {game.level === 'expert' ? 'PROFI' : 'NEHÉZ'}</span></div>
       <h1>Luxusba zárt vagyon.</h1>
-      <p className="intro">Öt aranyraklapot ki. Nyolcat biztonságba.</p><div className="campaign-route">01 Garázs és plató <span>→</span> 02 Kikötő <span>→</span> Dubaj</div>
-      <div className="level-buttons" role="group" aria-label="Nehézségi szint">{levels.map(item => <button key={item.id} aria-pressed={game.level === item.id} onClick={() => restart(item.id as LevelId)}>{item.id === 'hard' ? '01 / Nehéz' : '02 / Profi'}<small>{item.title}</small></button>)}</div>
+      <p className="intro">1. szint · Öt aranyraklapot ki. Nyolcat biztonságba.</p><div className="campaign-route">01 Garázs és plató <span>→</span> 02 Kikötő <span>→</span> Dubaj</div>
+      <div className="level-buttons" role="group" aria-label="Nehézségi szint">{levels.map(item => <button key={item.id} aria-pressed={game.level === item.id} onClick={() => restart(item.id as LevelId)}>{item.id === 'hard' ? 'Nehéz' : 'Profi'}<small>{item.title}</small></button>)}</div>
       {showHelp && <section className="help" aria-label="Játékszabályok"><h2>A nagy rakodás</h2><p>Koppints egy autóra vagy raklapra, majd húzd, vagy használd a nyilakat. Egy mozdulat egy mező. Az autók csak hosszirányban, a pénz négy irányban mozgatható.</p><p>Az öt aranyozott pénzes raklapot a garázs alsó, egymezős kijáratán kell kivinni. Kilenc autó torlaszolja az utat.</p><p>A platón már egy Porsche és három raklap vár. A két alsó, sárga bejárati mezőt szabadítsd fel. A garázs előtt váró raklapot a szabad + mezőre koppintva rakodhatod fel.</p><p>A fuvar csak akkor kész, ha mind a nyolc pénzes raklap az első két sor aranyszegélyes dokkjában áll. A bejáraton hagyott raklap még nincs biztonságban.</p><button className="text-button" onClick={() => setShowHelp(false)}>Értem, indulhat!</button></section>}
       <div className="stats" aria-label="Játékállás"><div><span>KIHOZVA</span><strong>{out}<small>/5</small></strong></div><div><span>LEPARKOLVA</span><strong>{securedCount(game)}<small>/8</small></strong></div><div><span>LÉPÉSEK</span><strong>{game.moves.toString().padStart(2, '0')}</strong></div></div>
-      <div className="scene-tabs" role="group" aria-label="Helyszín"><button aria-pressed={scene === 'garage'} onClick={() => switchScene('garage')}><span>01</span> Garázs <small>9 AUTÓ</small></button><button aria-pressed={scene === 'truck'} onClick={() => switchScene('truck')}><span>02</span> Ádám platója {game.queue.length > 0 && <b>{game.queue.length}</b>}</button></div>
+      <div className="scene-tabs" role="group" aria-label="Helyszín"><button aria-pressed={scene === 'garage'} onClick={() => switchScene('garage')}>Garázs <small>9 AUTÓ</small></button><button aria-pressed={scene === 'truck'} onClick={() => switchScene('truck')}>Ádám platója {game.queue.length > 0 && <b>{game.queue.length}</b>}</button></div>
       {scene === 'garage' && game.queue.length > 0 && <button className="queue-notice" onClick={() => switchScene('truck')}><span><strong>{game.queue.length} aranyraklap</strong> vár a garázs előtt</span><b>Rakodás →</b></button>}
       {scene === 'truck' && <section className={`loading-panel ${canLoad ? 'ready' : ''}`} aria-label="Felrakodás"><div className="loading-heading"><span className="incoming-art"><PalletArt /></span><div><strong>{game.queue.length ? `${game.queue.length} raklap vár felrakásra` : 'Ádám platója'}</strong><small>{truckCount(game)} / 8 raklap a platón • {securedCount(game)} a dokkokban</small></div></div><p>{loadingInfo}</p><button className="load-button" disabled={!canLoad} aria-disabled={!canLoad} onClick={() => handleLoad()}>{canLoad ? 'Következő raklap felrakása' : game.queue.length ? 'Rakodóhelyek foglaltak' : 'Még nincs kint raklap'}<span>{canLoad ? '↑' : '○'}</span></button></section>}
       <section className={`scene ${scene}`} aria-label={scene === 'garage' ? 'Garázs játéktér' : 'Platós autó játéktér'}>
@@ -101,10 +107,9 @@ export default function App() {
         <div className="gate"><span>▾</span>{scene === 'garage' ? 'KIJÁRAT' : 'RAKODÁS'}<span>▾</span></div>
       </section>
       <div className="queue-line"><span className="queue-icon" aria-hidden="true">▤</span><span><strong>{game.queue.length} raklap</strong> kint • <strong>{securedCount(game)} / 8</strong> a végső helyén</span></div>
-      {completed && <section className="success" role="status"><span aria-hidden="true">✦</span><h2>Ádám indulhat!</h2><p>Öt raklap kimentve, mind a nyolc biztonságban a Porsche előtt. {game.moves} lépésből oldottad meg.</p><button onClick={() => { if (won(game)) setPortSession({ cargo: game.truck.filter(p => p.kind === 'cash'), practice: false }); }}>Következő pálya: Kikötő →</button></section>}
+      {completed && <section className="success" role="status"><span aria-hidden="true">✦</span><h2>Ádám indulhat!</h2><p>Öt raklap kimentve, mind a nyolc biztonságban a Porsche előtt. {game.moves} lépésből oldottad meg.</p><button onClick={startPort}>Következő pálya: Kikötő →</button></section>}
       <section className="controls" aria-label="Mozgatás"><div className="selection"><span>KIVÁLASZTVA</span><strong>{active?.label ?? 'Válassz egy elemet'}</strong><small>{active ? active.kind === 'cash' ? 'Mozgatható négy irányban' : 'Csak hosszirányban mozog' : 'Húzd vagy használd a nyilakat'}</small></div><div className="dpad">{(['up', 'left', 'down', 'right'] as const).map(direction => <button key={direction} className={direction} aria-label={names[direction]} disabled={!active || move(game, scene, active.id, direction) === game} onClick={() => step(direction)}>{arrows[direction]}</button>)}</div></section>
       <p className="message" role="status">{message}</p><div className="bottom-actions"><button disabled={history.length < 2} onClick={() => { gesture.current = null; setHistory(previous => previous.slice(0, -1)); setMessage('Az utolsó lépést visszavontad.'); }}>↶ Visszavonás</button><button onClick={() => restart()}>↻ Újrakezdés</button></div>
-      <button className="port-practice-button" onClick={() => setPortSession({ practice: true })}>Új pálya kipróbálása: Kikötő →</button>
     </main><footer>MTCSY <span>GOLDEN GARAGE • GONDOLKOZZ ELŐRE</span></footer>
   </div>;
 }

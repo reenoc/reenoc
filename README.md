@@ -4,9 +4,11 @@ Mobilra tervezett, magyar nyelvű logikai webjáték React, TypeScript és Vite 
 
 [Játék megnyitása telefonon](https://reenoc.github.io/reenoc/)
 
-## Két kihívás
+## Két egymást követő szint
 
-A **Nehéz** és **Profi** pálya különböző, szűk garázselrendezést ad: kilenc luxusautó és öt aranyozott pénzes raklap foglal el 26 mezőt a 36-ból. Alapból a Profi pálya indul.
+Az **1. szint** a garázs és Ádám platójának megtöltése, a **2. szint** a kikötői kirakodás. Csak az első szint teljesítése után lehet továbblépni. A kikötőből nincs visszaút a garázsba, a hajóindulás pedig lezárja a játékot. Az aktuális feladaton belüli visszavonás és újrakezdés a hajó feladásáig érhető el.
+
+A **Nehéz** és **Profi** az első szint két nehézségi változata: kilenc luxusautó és öt aranyozott pénzes raklap foglal el 26 mezőt a 36-ból. Alapból a Profi változat indul.
 Mindkettő megoldhatóságát teljes, tesztben visszajátszott lépéssor igazolja. A kezdő kijárat megnyitása több autó átrendezését igényli.
 
 ## Szabályok és felrakodás
@@ -19,13 +21,13 @@ Mindkettő megoldhatóságát teljes, tesztben visszajátszott lépéssor igazol
 - Koppints a szabad, sárga **+ FELRAKÁS** mezőre, vagy használd a felrakodási panel gombját. A foglalt bejárat okát a panel mindig kiírja.
 - Az első pálya teljesítéséhez **mind a nyolc pénzes raklapot a plató első két sorának aranyszegélyes dokkjaira kell rendezni**. A bejáraton álló raklap még nem számít késznek.
 - Kezelés: koppintás és iránygombok, érintéses húzás, vagy a billentyűzet nyilai. Az autóknál a ferde húzás is a jármű hosszának irányát követi.
-- Visszavonás, újrakezdés és pályaválasztás elérhető. A játékállás frissítéskor újraindul.
+- Az első szinten a garázs és a plató között lehet váltani a rakodáshoz. Visszavonás, újrakezdés és nehézségválasztás elérhető. A játékállás frissítéskor újraindul.
 
 A játéktér lefogja az érintéses görgetést; az oldalt a pályán kívül lehet görgetni. Az autók és a pénzkötegekkel rakott, aranyozott raklapok helyi SVG-grafikák, külső képszolgáltatás nélkül.
 
 ## Második pálya: kikötő és Dubaj
 
-A sikeres platórakodás után a **Következő pálya: Kikötő** gomb a nyolc tényleges raklapot továbbviszi a kikötőbe. Az új feladat külön is elindítható a garázs alján lévő gyakorlógombbal, vagy a [kikötői gyakorlólinkkel](https://reenoc.github.io/reenoc/?stage=port). A gyakorlás nem jelöli teljesítettnek a garázst.
+A sikeres platórakodás után a **Következő pálya: Kikötő** gomb a nyolc tényleges raklapot továbbviszi a kikötőbe. Nincs gyakorlógomb vagy szintátugrás; a korábbi `?stage=port` link is az első szintet indítja. Az előző szintre visszatérő gomb nincs.
 
 - A béka egy mezőt foglal, az emelt raklap közvetlenül előtte helyezkedik el.
 - Minden raklapnak **két szemközti villanyílása** van, sárga jelöléssel. Csak ezek felől lehet emelni; a másik két oldal zárt.
@@ -35,7 +37,7 @@ A sikeres platórakodás után a **Következő pálya: Kikötő** gomb a nyolc t
 - A pénz átmenetileg bárhol letehető, és később másik használható oldalról is felvehető.
 - A konténernek kétmezős ajtaja és nyolc kijelölt célmezője van. A raklapokkal nem szabad elzárni a később szükséges megközelítést és fordulóhelyet.
 - Mind a nyolc raklap letétele után az **üres békát is ki kell hozni** a konténerből. Csak ekkor zárható le a konténer és indítható a Dubajba tartó hajó.
-- Billentyűzet: nyilak a haladáshoz, Q / E a forduláshoz. Visszavonás és a kikötő külön újrakezdése is elérhető.
+- Billentyűzet: nyilak a haladáshoz, Q / E a forduláshoz. A kirakodás közben visszavonás és a kikötő újrakezdése is elérhető. A hajó feladása után ezek megszűnnek, és a befejező történet következik.
 
 A `src/test/port-solution.json` 176 lépéses, ütközések és kétoldali megközelítés szempontjából is ellenőrzött megoldást tartalmaz. Nem minimumlépésszám, és a játékcsomag nem importálja.
 

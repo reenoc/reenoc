@@ -61,14 +61,10 @@ describe('Retró történet', () => {
     expect(document.activeElement).toBe(replay);
     expect(screen.getByRole('button', { name: 'Lamborghini Aventador, 3. sor, 4. oszlop' })).toBeTruthy();
     expect(within(screen.getByLabelText('Játékállás')).getByText('01')).toBeTruthy();
-    await user.click(screen.getByRole('button', { name: /Új pálya kipróbálása/ }));
-    expect(screen.getByRole('dialog', { name: 'Két oldal titka' })).toBeTruthy();
-    await user.keyboard('{Escape}');
-    expect(screen.getByRole('button', { name: 'Béka, üres, 10. sor, 6. oszlop' })).toBeTruthy();
   });
 
   it('csak a konténer tényleges feladása után meséli el a hajó indulását', () => {
-    render(<PortGame practice onBack={vi.fn()} />);
+    render(<PortGame />);
     fireEvent.click(screen.getByRole('button', { name: /Átugrás/ }));
     const keys = ['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft'];
     function action(a: (string | number)[]) {
@@ -85,6 +81,10 @@ describe('Retró történet', () => {
     fireEvent.click(screen.getByRole('button', { name: /Konténer lezárása/ }));
     expect(screen.getByRole('dialog', { name: 'Irány Dubaj' })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: /Átugrás/ }));
+    expect(screen.getByRole('heading', { name: 'Úton Dubajba!' })).toBeTruthy();
+    expect(screen.getByText('Mindkét szint teljesítve. A nagy fuvar vége.')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: /Vissza|újrakezdés/i })).toBeNull();
+    fireEvent.keyDown(document.querySelector('.game-shell')!, { key: 'ArrowDown' });
     expect(screen.getByRole('heading', { name: 'Úton Dubajba!' })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Történet' }));
     expect(screen.getByRole('dialog', { name: 'Irány Dubaj' })).toBeTruthy();

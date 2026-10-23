@@ -6,6 +6,19 @@ import { createGame } from './game';
 import solutions from './test/solutions.json';
 
 describe('Golden Garage játékfelület', () => {
+  it('mindig az első szintről indul, a régi gyakorlólink sem engedi átugrani', () => {
+    window.history.replaceState(null, '', '/?stage=port');
+    try {
+      render(<App />);
+      expect(screen.getByRole('dialog', { name: 'A nagy fuvar' })).toBeTruthy();
+      fireEvent.click(screen.getByRole('button', { name: /Átugrás/ }));
+      expect(screen.getByRole('heading', { name: 'Luxusba zárt vagyon.' })).toBeTruthy();
+      expect(screen.getByText(/^1\. szint ·/)).toBeTruthy();
+      expect(screen.queryByRole('button', { name: /Kikötő|kipróbálása/i })).toBeNull();
+      expect(screen.queryByRole('group', { name: 'Kikötő, 8 × 10 mező' })).toBeNull();
+    } finally { window.history.replaceState(null, '', '/'); }
+  });
+
   it('a pályán kezdett érintés nem görgeti az oldalt, kívül szabad a görgetés', () => {
     render(<App />); fireEvent.click(screen.getByRole('button', { name: /Átugrás/ }));
     const board = screen.getByRole('group', { name: 'Garázs, 6 × 6 mező' });
@@ -46,10 +59,10 @@ describe('Golden Garage játékfelület', () => {
 
   it('különböző nehéz pályák között vált, és újrakezdéskor megőrzi a választást', async () => {
     const user = userEvent.setup(); render(<App />); fireEvent.click(screen.getByRole('button', { name: /Átugrás/ }));
-    await user.click(screen.getByRole('button', { name: /01 \/ Nehéz/ }));
+    await user.click(screen.getByRole('button', { name: /^Nehéz/ }));
     expect(screen.getByRole('button', { name: 'Pénz 1, 1. sor, 3. oszlop' })).toBeTruthy();
     await user.click(screen.getByRole('button', { name: /Újrakezdés/ }));
-    expect(screen.getByRole('button', { name: /01 \/ Nehéz/ }).getAttribute('aria-pressed')).toBe('true');
+    expect(screen.getByRole('button', { name: /^Nehéz/ }).getAttribute('aria-pressed')).toBe('true');
     expect(screen.getAllByRole('button', { name: /^Pénz [1-5],/ })).toHaveLength(5);
   });
 });
