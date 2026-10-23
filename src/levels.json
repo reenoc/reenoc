@@ -1,0 +1,140 @@
+[
+  {
+    "id": "hard",
+    "name": "01 / Z\u00e1rt sorok",
+    "title": "Kilenc aut\u00f3. Egy kij\u00e1rat.",
+    "openingMoves": 10,
+    "cars": [
+      {
+        "id": "porsche",
+        "w": 2,
+        "h": 1,
+        "position": 0
+      },
+      {
+        "id": "ferrari",
+        "w": 1,
+        "h": 2,
+        "position": 14
+      },
+      {
+        "id": "limousine",
+        "w": 3,
+        "h": 1,
+        "position": 3
+      },
+      {
+        "id": "lambo",
+        "w": 1,
+        "h": 3,
+        "position": 9
+      },
+      {
+        "id": "aston",
+        "w": 1,
+        "h": 2,
+        "position": 23
+      },
+      {
+        "id": "mercedes",
+        "w": 1,
+        "h": 2,
+        "position": 26
+      },
+      {
+        "id": "rolls",
+        "w": 1,
+        "h": 2,
+        "position": 13
+      },
+      {
+        "id": "range",
+        "w": 2,
+        "h": 1,
+        "position": 24
+      },
+      {
+        "id": "maserati",
+        "w": 3,
+        "h": 1,
+        "position": 33
+      }
+    ],
+    "cash": [
+      2,
+      28,
+      12,
+      6,
+      17
+    ]
+  },
+  {
+    "id": "expert",
+    "name": "02 / Sz\u00e9fgar\u00e1zs",
+    "title": "El\u0151bb tervezz, azt\u00e1n mozdulj.",
+    "openingMoves": 15,
+    "cars": [
+      {
+        "id": "porsche",
+        "w": 2,
+        "h": 1,
+        "position": 0
+      },
+      {
+        "id": "ferrari",
+        "w": 1,
+        "h": 2,
+        "position": 8
+      },
+      {
+        "id": "limousine",
+        "w": 3,
+        "h": 1,
+        "position": 2
+      },
+      {
+        "id": "lambo",
+        "w": 1,
+        "h": 3,
+        "position": 21
+      },
+      {
+        "id": "aston",
+        "w": 1,
+        "h": 2,
+        "position": 17
+      },
+      {
+        "id": "mercedes",
+        "w": 1,
+        "h": 2,
+        "position": 20
+      },
+      {
+        "id": "rolls",
+        "w": 1,
+        "h": 2,
+        "position": 7
+      },
+      {
+        "id": "range",
+        "w": 2,
+        "h": 1,
+        "position": 24
+      },
+      {
+        "id": "maserati",
+        "w": 3,
+        "h": 1,
+        "position": 30
+      }
+    ],
+    "cash": [
+      9,
+      5,
+      35,
+      18,
+      12
+    ]
+  }
+]

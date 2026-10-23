@@ -1,76 +1,90 @@
 import { describe, expect, it } from 'vitest';
-import { createGame, load, move, overlaps, truckCount, won, type Direction, type Game, type Scene } from './game';
+import { createGame, load, loadingPlaces, move, overlaps, securedCount, truckCount, won, type Direction, type Game, type LevelId, type Scene } from './game';
+import solutions from './test/solutions.json';
 
-describe('MTCSY játékszabályok', () => {
-  it('nem enged ütközést, pályán kívüli mozgást vagy keresztirányú autómozgást', () => {
+function validate(game: Game) {
+  expect(game.garage.filter(p => p.kind === 'cash').length + game.queue.length + truckCount(game)).toBe(8);
+  for (const scene of ['garage', 'truck'] as const) {
+    const size = scene === 'garage' ? 6 : 4;
+    game[scene].forEach((piece, i, all) => {
+      expect(piece.x).toBeGreaterThanOrEqual(0); expect(piece.y).toBeGreaterThanOrEqual(0);
+      expect(piece.x + piece.w).toBeLessThanOrEqual(size); expect(piece.y + piece.h).toBeLessThanOrEqual(size);
+      for (const other of all.slice(i + 1)) expect(overlaps(piece, other)).toBe(false);
+    });
+  }
+}
+
+describe('Golden Garage játékszabályok', () => {
+  it('sűrű, kilencautós pályával indul, és megőrzi a mozgási korlátokat', () => {
     const game = createGame();
-    expect(move(game, 'garage', 'cash-1', 'left')).toBe(game);
-    expect(move(game, 'garage', 'cash-2', 'down')).toBe(game);
-    expect(move(game, 'garage', 'lambo', 'up')).toBe(game);
-    expect(move(game, 'garage', 'ferrari', 'left')).toBe(game);
-    expect(load(game)).toBe(game);
-    expect(won(game)).toBe(false);
+    expect(game.garage.filter(p => p.kind === 'car')).toHaveLength(9);
+    expect(game.garage.reduce((sum, p) => sum + p.w * p.h, 0)).toBe(26);
+    expect(move(game, 'garage', 'lambo', 'right')).toBe(game);
+    expect(move(game, 'garage', 'porsche', 'up')).toBe(game);
+    const cash = { ...game.garage[0], x: 0, y: 0 };
+    const obstacle = { ...game.garage.find(p => p.id === 'porsche')!, x: 1, y: 0 };
+    const blocked = { ...game, garage: [cash, obstacle] };
+    expect(move(blocked, 'garage', cash.id, 'left')).toBe(blocked);
+    expect(move(blocked, 'garage', cash.id, 'right')).toBe(blocked);
+    validate(game);
   });
 
-  it('csak a kijáraton engedi ki a pénzt, a garázsból autót nem lehet kivinni', () => {
+  it('csak az egymezős kijáraton engedi ki a pénzt; autó nem vihető ki', () => {
     const game = createGame();
-    const pallet = { ...game.garage[0], x: 1, y: 5 };
-    const blocked = { ...game, garage: [pallet] };
-    expect(move(blocked, 'garage', pallet.id, 'down')).toBe(blocked);
-    const atExit = { ...game, garage: [{ ...pallet, x: 2 }] };
-    const next = move(atExit, 'garage', pallet.id, 'down');
-    expect(next.garage).toHaveLength(0);
-    expect(next.queue).toHaveLength(1);
-    expect(next.moves).toBe(1);
+    for (const x of [0, 1, 3, 4, 5]) {
+      const cash = { ...game.garage[0], x, y: 5 };
+      const blocked = { ...game, garage: [cash] };
+      expect(move(blocked, 'garage', cash.id, 'down')).toBe(blocked);
+    }
+    const cash = { ...game.garage[0], x: 2, y: 5 };
+    const atExit = { ...game, garage: [cash] };
+    const next = move(atExit, 'garage', cash.id, 'down');
+    expect(next.garage).toHaveLength(0); expect(next.queue).toHaveLength(1); expect(next.moves).toBe(1);
     expect(game.queue).toHaveLength(0);
-    const car = { ...game.garage.find((piece) => piece.id === 'mercedes')!, x: 2, y: 4 };
+    const car = { ...game.garage.find(p => p.id === 'mercedes')!, x: 2, y: 4 };
     const carAtExit = { ...game, garage: [car] };
     expect(move(carAtExit, 'garage', car.id, 'down')).toBe(carAtExit);
   });
 
-  it('a teljes kezdőpálya megoldható, mind a nyolc raklap felrakható ütközés nélkül', () => {
-    let game = createGame();
-    function validate(current: Game) {
-      expect(current.garage.filter((p) => p.kind === 'cash').length + current.queue.length + truckCount(current)).toBe(8);
-      for (const scene of ['garage', 'truck'] as const) {
-        const size = scene === 'garage' ? 6 : 4;
-        current[scene].forEach((piece, i, all) => {
-          expect(piece.x).toBeGreaterThanOrEqual(0); expect(piece.y).toBeGreaterThanOrEqual(0);
-          expect(piece.x + piece.w).toBeLessThanOrEqual(size); expect(piece.y + piece.h).toBeLessThanOrEqual(size);
-          for (const other of all.slice(i + 1)) expect(overlaps(piece, other)).toBe(false);
-        });
-      }
-    }
-    const step = (scene: Scene, id: string, path: Direction[]) => {
-      for (const direction of path) {
-        const next = move(game, scene, id, direction);
-        expect(next, `${id} → ${direction}`).not.toBe(game);
-        game = next; validate(game);
-      }
-    };
-    const repeat = (direction: Direction, count: number) => Array<Direction>(count).fill(direction);
-    step('garage', 'aston', ['right']);
-    step('garage', 'mercedes', ['up', 'up']);
-    step('garage', 'lambo', ['left']);
-    step('garage', 'porsche-garage', ['left', 'left']);
-    step('garage', 'cash-2', ['right', ...repeat('down', 6)]);
-    step('garage', 'cash-3', ['left', ...repeat('down', 6)]);
-    step('garage', 'cash-1', [...repeat('right', 3), ...repeat('down', 6)]);
-    step('garage', 'cash-4', ['right', 'right', 'down', 'down', 'down']);
-    step('garage', 'cash-5', ['up', 'up', 'left', 'left', ...repeat('down', 5)]);
-    expect(game.queue).toHaveLength(5);
-    expect(load(game)).toBe(game); // Az eredeti raklapok foglalják a rakodóhelyeket.
-    step('truck', 'truck-3', ['right', 'up', 'up', 'left', 'up', 'left', 'left']);
-    step('truck', 'truck-2', ['right', 'right', 'up', 'up', 'left', 'up', 'left']);
-    step('truck', 'truck-1', ['right', 'right', 'right', 'up', 'up', 'up', 'left']);
-    const destinations: Direction[][] = [['up'], ['left', 'left', 'left'], ['left', 'left'], ['left'], []];
-    for (const tail of destinations) {
-      const id = game.queue[0].id;
-      const next = load(game);
-      expect(next).not.toBe(game); game = next; validate(game);
-      step('truck', id, ['right', 'right', 'up', 'up', ...tail]);
-    }
-    expect(truckCount(game)).toBe(8);
-    expect(won(game)).toBe(true);
+  it('csak szabad bejárati mezőre rakodik, választott mezőt sem írhat felül', () => {
+    const start = createGame();
+    expect(load(start)).toBe(start);
+    const game = { ...start, queue: [start.garage[0], start.garage[1]] };
+    expect(loadingPlaces(game)).toEqual([]); expect(load(game)).toBe(game);
+    const space = move(game, 'truck', 'truck-3', 'right');
+    expect(loadingPlaces(space)).toEqual([2]);
+    expect(load(space, 1)).toBe(space); expect(load(space, 3)).toBe(space);
+    const loaded = load(space, 2);
+    expect(loaded.queue).toHaveLength(1); expect(truckCount(loaded)).toBe(4);
+    expect(loaded.truck.find(p => p.id === game.queue[0].id)).toMatchObject({ x: 2, y: 3 });
+    expect(load(loaded, 2)).toBe(loaded);
   });
+
+  for (const level of ['hard', 'expert'] as LevelId[]) {
+    it(`${level}: az öt raklap kijuttatható, majd mind a nyolc pénz a dokkokra rendezhető`, () => {
+      let game = createGame(level);
+      const step = (scene: Scene, id: string, path: Direction[]) => {
+        for (const direction of path) {
+          const next = move(game, scene, id, direction);
+          expect(next, `${level}: ${id} → ${direction}`).not.toBe(game);
+          game = next; validate(game);
+        }
+      };
+      for (const [id, direction] of solutions[level]) step('garage', id, [direction as Direction]);
+      expect(game.queue).toHaveLength(5); expect(won(game)).toBe(false);
+      const order = game.queue.map(p => p.id);
+      expect(load(game)).toBe(game);
+      step('truck', 'truck-3', ['right', 'up', 'up', 'left', 'up', 'left', 'left']);
+      step('truck', 'truck-2', ['right', 'right', 'up', 'up', 'left', 'up', 'left']);
+      step('truck', 'truck-1', ['right', 'right', 'right', 'up', 'up', 'up', 'left']);
+      expect(securedCount(game)).toBe(3);
+      const tails: Direction[][] = [['up'], ['left', 'left', 'left'], ['left', 'left'], ['left'], []];
+      for (let i = 0; i < 5; i++) {
+        const next = load(game, 1); expect(next).not.toBe(game); game = next; validate(game);
+        expect(won(game)).toBe(false); // A bejáratra felrakás még nem győzelem.
+        step('truck', order[i], ['right', 'right', 'up', 'up', ...tails[i]]);
+      }
+      expect(truckCount(game)).toBe(8); expect(securedCount(game)).toBe(8); expect(won(game)).toBe(true);
+    });
+  }
 });
