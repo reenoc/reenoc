@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { createGame, getLevel, levels, load, loadingPlaces, move, securedCount, truckCount, won, type Direction, type Game, type LevelId, type Piece, type Scene } from './game';
 import { CarArt, PalletArt } from './PieceArt';
 import PortGame from './PortGame';
+import StoryDialog from './StoryDialog';
 
 const arrows: Record<Direction, string> = { up: '↑', left: '←', down: '↓', right: '→' };
 const names: Record<Direction, string> = { up: 'Fel', left: 'Balra', down: 'Le', right: 'Jobbra' };
@@ -13,9 +14,11 @@ export default function App() {
   const [selected, setSelected] = useState<string | null>(null);
   const [message, setMessage] = useState('Kilenc autó zárja el az utat. Előbb nyisd meg a szűk kijáratot.');
   const [showHelp, setShowHelp] = useState(false);
+  const [storyOpen, setStoryOpen] = useState(() => new URLSearchParams(window.location.search).get('stage') !== 'port');
   const [portSession, setPortSession] = useState<{ cargo?: Piece[]; practice: boolean } | null>(() => new URLSearchParams(window.location.search).get('stage') === 'port' ? { practice: true } : null);
   const inPort = portSession !== null;
   const board = useRef<HTMLDivElement>(null);
+  const storyTrigger = useRef<HTMLButtonElement>(null);
   const gesture = useRef<{ x: number; y: number; id: string; pointerId: number; axis: 'horizontal' | 'vertical' | 'both' } | null>(null);
   useEffect(() => {
     const element = board.current;
@@ -61,13 +64,15 @@ export default function App() {
     setMessage('Új próbálkozás. Nyisd meg a kijáratot, majd rendezd el mind a nyolc raklapot.');
   }
   function onKeyDown(event: KeyboardEvent) {
+    if (storyOpen) return;
     const keys: Record<string, Direction> = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right' };
     if (keys[event.key] && selected) { event.preventDefault(); step(keys[event.key]); }
   }
   if (portSession) return <PortGame cargo={portSession.cargo} practice={portSession.practice} campaignMoves={game.moves} onBack={() => setPortSession(null)} />;
   const occupied = (x: number, y: number) => game.truck.some(p => x >= p.x && x < p.x + p.w && y >= p.y && y < p.y + p.h);
-  return <div className="game-shell" onKeyDown={onKeyDown}>
-    <header className="topbar"><div className="brand"><span className="brand-mark" aria-hidden="true">M<span>//</span></span><div><strong>MTCSY</strong><span>GOLDEN GARAGE</span></div></div><button className="icon-button" aria-label="Játékszabályok" aria-expanded={showHelp} onClick={() => setShowHelp(!showHelp)}>?</button></header>
+  return <div className="game-shell" onKeyDown={onKeyDown} inert={storyOpen}>
+    {storyOpen && <StoryDialog chapter="garage" returnFocus={storyTrigger.current} onClose={() => setStoryOpen(false)} />}
+    <header className="topbar"><div className="brand"><span className="brand-mark" aria-hidden="true">M<span>//</span></span><div><strong>MTCSY</strong><span>GOLDEN GARAGE</span></div></div><div className="header-actions"><button ref={storyTrigger} className="story-replay" onClick={() => setStoryOpen(true)}>Történet</button><button className="icon-button" aria-label="Játékszabályok" aria-expanded={showHelp} onClick={() => setShowHelp(!showHelp)}>?</button></div></header>
     <main>
       <div className="level-line"><span className="level-tag">{level.name}</span><span className="difficulty"><i /><i /><i /> {game.level === 'expert' ? 'PROFI' : 'NEHÉZ'}</span></div>
       <h1>Luxusba zárt vagyon.</h1>

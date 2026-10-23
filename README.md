@@ -73,6 +73,7 @@ A `dist/` statikus kimenetét a `gh-pages` ág gyökerére kell publikálni, `.n
 
 ## Szerkezet
 
+- `src/StoryDialog.tsx`: eredeti magyar történet három retró jelenettel (garázs, kikötő, hajóindulás), pixelgrafikával és betűnkénti kiírással. Koppintással gyorsítható, átugorható, a fejléc Történet gombjával újraolvasható. Csökkentett mozgásnál a teljes szöveg azonnal látszik; a párbeszédablak alatt a játék nem vezérelhető.
 - `src/game.ts`: mozgás, ütközések, felrakodás és dokkolási győzelmi feltétel.
 - `src/levels.json`: a két pálya kiinduló elrendezése.
 - `src/PieceArt.tsx`: fémes luxusautók és aranyozott raklapok SVG-grafikái.

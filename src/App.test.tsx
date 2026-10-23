@@ -7,7 +7,7 @@ import solutions from './test/solutions.json';
 
 describe('Golden Garage játékfelület', () => {
   it('a pályán kezdett érintés nem görgeti az oldalt, kívül szabad a görgetés', () => {
-    render(<App />);
+    render(<App />); fireEvent.click(screen.getByRole('button', { name: /Átugrás/ }));
     const board = screen.getByRole('group', { name: 'Garázs, 6 × 6 mező' });
     const car = screen.getByRole('button', { name: /^Ferrari F8,/ });
     expect(fireEvent.touchStart(car, { cancelable: true })).toBe(false);
@@ -17,7 +17,7 @@ describe('Golden Garage játékfelület', () => {
   });
 
   it('billentyűzettel mozgat és visszavonja a lépést', async () => {
-    const user = userEvent.setup(); render(<App />);
+    const user = userEvent.setup(); render(<App />); fireEvent.click(screen.getByRole('button', { name: /Átugrás/ }));
     await user.click(screen.getByRole('button', { name: 'Lamborghini Aventador, 4. sor, 4. oszlop' }));
     await user.keyboard('{ArrowUp}');
     expect(screen.getByRole('button', { name: 'Lamborghini Aventador, 3. sor, 4. oszlop' })).toBeTruthy();
@@ -26,7 +26,7 @@ describe('Golden Garage játékfelület', () => {
   });
 
   it('elmagyarázza a foglalt bejáratot, majd a felszabadított mezőn egyszer rakodik', async () => {
-    const user = userEvent.setup(); render(<App />);
+    const user = userEvent.setup(); render(<App />); fireEvent.click(screen.getByRole('button', { name: /Átugrás/ }));
     const labels = Object.fromEntries(createGame().garage.map(p => [p.id, p.label]));
     let selected = '';
     for (const [id, direction] of solutions.expert.slice(0, 21)) {
@@ -45,7 +45,7 @@ describe('Golden Garage játékfelület', () => {
   }, 20000);
 
   it('különböző nehéz pályák között vált, és újrakezdéskor megőrzi a választást', async () => {
-    const user = userEvent.setup(); render(<App />);
+    const user = userEvent.setup(); render(<App />); fireEvent.click(screen.getByRole('button', { name: /Átugrás/ }));
     await user.click(screen.getByRole('button', { name: /01 \/ Nehéz/ }));
     expect(screen.getByRole('button', { name: 'Pénz 1, 1. sor, 3. oszlop' })).toBeTruthy();
     await user.click(screen.getByRole('button', { name: /Újrakezdés/ }));

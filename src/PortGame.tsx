@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { CarArt, PalletArt } from './PieceArt';
 import { type Direction, type Piece } from './game';
+import StoryDialog, { type StoryChapter } from './StoryDialog';
 import { CLOCKWISE, PORT_HEIGHT, PORT_WIDTH, canLift, createPort, dispatchPort, entrySides, isContainer, isPortFloor, isPortGoal, liftPort, lowerPort, movePort, portDocked, portReady, turnPort, walkPort, type PortState } from './port';
 
 const arrows: Record<Direction, string> = { up: '↑', right: '→', down: '↓', left: '←' };
@@ -24,7 +25,9 @@ export default function PortGame({ cargo, practice, campaignMoves = 0, onBack }:
   const [selected, setSelected] = useState(() => createPort(cargo).pallets[3].id);
   const [message, setMessage] = useState('Az üres békával koppints egy szabad mezőre. A raklapot csak a jelölt két oldal felől emelheted.');
   const [help, setHelp] = useState(false);
+  const [story, setStory] = useState<StoryChapter | null>('port');
   const board = useRef<HTMLDivElement>(null);
+  const storyTrigger = useRef<HTMLButtonElement>(null);
   const gesture = useRef<{ x: number; y: number; pointer: number } | null>(null);
   const state = history[history.length - 1];
   const active = state.pallets.find(p => p.id === (state.carrying ?? selected));
@@ -39,6 +42,7 @@ export default function PortGame({ cargo, practice, campaignMoves = 0, onBack }:
   function commit(next: PortState, success: string, failure: string) {
     if (next === state) { setMessage(failure); return; }
     setHistory(previous => [...previous, next]); setMessage(success);
+    if (next.dispatched && !state.dispatched) setStory('ending');
   }
   function step(direction: Direction) {
     commit(movePort(state, direction), state.carrying ? 'A béka és a raklap együtt mozog. Fordulni csak szabad sarokban lehet.' : 'Keresd meg a raklap jelölt villanyílását.', state.carrying ? 'Az emelt raklap csak előre vagy hátra haladhat. Oldalirányhoz előbb fordítsd a békát.' : 'Ezt az utat fal, autó vagy raklap zárja el.');
@@ -56,6 +60,7 @@ export default function PortGame({ cargo, practice, campaignMoves = 0, onBack }:
     setMessage(p.entry === 'horizontal' ? 'Ennek a raklapnak balról és jobbról van villanyílása. Felülről és alulról zárt.' : 'Ennek a raklapnak felül és alul van villanyílása. Balról és jobbról zárt.');
   }
   function onKeyDown(event: KeyboardEvent) {
+    if (story) return;
     if (event.altKey || event.ctrlKey || event.metaKey) return;
     const keys: Record<string, Direction> = { ArrowUp: 'up', ArrowRight: 'right', ArrowDown: 'down', ArrowLeft: 'left' };
     if (keys[event.key]) { event.preventDefault(); step(keys[event.key]); }
@@ -63,8 +68,9 @@ export default function PortGame({ cargo, practice, campaignMoves = 0, onBack }:
     else if (event.key.toLowerCase() === 'e') { event.preventDefault(); turn('right'); }
   }
   function reset() { const fresh = createPort(cargo); gesture.current = null; setHistory([fresh]); setSelected(fresh.pallets[3].id); setMessage('Új kirakodás. A sorrend és a szabadon hagyott fordulók döntik el, sikerül-e.'); }
-  return <div className="game-shell port-shell" onKeyDown={onKeyDown}>
-    <header className="topbar"><div className="brand"><span className="brand-mark" aria-hidden="true">M<span>//</span></span><div><strong>MTCSY</strong><span>PORT OF GOLD</span></div></div><button className="icon-button" aria-label="Kikötői szabályok" aria-expanded={help} onClick={() => setHelp(!help)}>?</button></header>
+  return <div className="game-shell port-shell" onKeyDown={onKeyDown} inert={story !== null}>
+    {story && <StoryDialog key={story} chapter={story} returnFocus={storyTrigger.current} onClose={() => setStory(null)} />}
+    <header className="topbar"><div className="brand"><span className="brand-mark" aria-hidden="true">M<span>//</span></span><div><strong>MTCSY</strong><span>PORT OF GOLD</span></div></div><div className="header-actions"><button ref={storyTrigger} className="story-replay" onClick={() => setStory(state.dispatched ? 'ending' : 'port')}>Történet</button><button className="icon-button" aria-label="Kikötői szabályok" aria-expanded={help} onClick={() => setHelp(!help)}>?</button></div></header>
     <main>
       <div className="port-route"><span>01 Garázs {practice ? '○' : '✓'}</span><b>→</b><strong>02 Kikötő</strong><b>→</b><span>Dubaj</span></div>
       <div className="level-line"><span className="level-tag">{practice ? 'KIKÖTŐ / GYAKORLÁS' : 'KÖVETKEZŐ PÁLYA / KIKÖTŐ'}</span><span className="difficulty"><i /><i /><i /> KÉT OLDAL</span></div>
