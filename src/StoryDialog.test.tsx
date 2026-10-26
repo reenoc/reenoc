@@ -67,13 +67,17 @@ describe('Retró történet', () => {
     render(<PortGame />);
     fireEvent.click(screen.getByRole('button', { name: /Átugrás/ }));
     const keys = ['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft'];
+    const board = screen.getByRole('group', { name: 'Kikötő, 8 × 10 mező' });
+    const lift = screen.getByRole('button', { name: '↑ Raklap emelése' });
+    const turns = { left: screen.getByRole('button', { name: 'Fordítás balra' }), right: screen.getByRole('button', { name: 'Fordítás jobbra' }) };
+    const pallets = screen.getAllByRole('button', { name: /^Raklap [1-8],/ });
     function action(a: (string | number)[]) {
-      if (a[0] === 'move') fireEvent.keyDown(screen.getByRole('button', { name: /^Béka,/ }), { key: keys[a[1] as number] });
-      else if (a[0] === 'turn') fireEvent.click(screen.getByRole('button', { name: a[1] === 'left' ? 'Fordítás balra' : 'Fordítás jobbra' }));
-      else fireEvent.click(screen.getByRole('button', { name: a[0] === 'lift' ? '↑ Raklap emelése' : '↓ Raklap letétele' }));
+      if (a[0] === 'move') fireEvent.keyDown(board, { key: keys[a[1] as number] });
+      else if (a[0] === 'turn') fireEvent.click(turns[a[1] as 'left' | 'right']);
+      else fireEvent.click(lift);
     }
     for (const group of solution.groups) {
-      fireEvent.click(screen.getByRole('button', { name: new RegExp(`^Raklap ${group.index + 1},`) }));
+      fireEvent.click(pallets[group.index]);
       group.actions.forEach(action);
     }
     expect(screen.queryByRole('dialog')).toBeNull();

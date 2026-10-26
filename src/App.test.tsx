@@ -47,7 +47,7 @@ describe('Golden Garage játékfelület', () => {
       const keys: Record<string, string> = { up: '{ArrowUp}', down: '{ArrowDown}', left: '{ArrowLeft}', right: '{ArrowRight}' };
       await user.keyboard(keys[direction]);
     }
-    await user.click(screen.getByRole('button', { name: /Ádám platója/ }));
+    await user.click(screen.getByRole('button', { name: /Platós Rolls/ }));
     expect(within(screen.getByRole('region', { name: 'Felrakodás' })).getByText(/A két sárga rakodóhely foglalt/)).toBeTruthy();
     expect(screen.getByRole('button', { name: /Rakodóhelyek foglaltak/ }).getAttribute('aria-disabled')).toBe('true');
     await user.click(screen.getByRole('button', { name: 'Eredeti pénz 3, 4. sor, 3. oszlop' }));

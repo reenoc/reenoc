@@ -6,25 +6,25 @@ const stories = {
   garage: {
     number: '01', location: 'PRIVÁT GARÁZS · 23:47', title: 'A nagy fuvar', subtitle: 'Minden jó terv egy szűk kijáratnál kezdődik.', start: 'Induljon a játék →',
     pages: [
-      { speaker: 'MESÉLŐ', text: 'A város már elcsendesedett. A garázs mélyén kilenc luxusautó csillan a lámpafényben. Közöttük öt aranyozott raklapnyi pénz vár arra, hogy végre útnak induljon.' },
-      { speaker: 'ÁDÁM', text: 'A platóval itt várok a kapu előtt. A Porsche és három raklap már fent van. A másik öt még odabent… Csak egy keskeny kijáratunk van. Rád bízom a sorrendet.' },
-      { speaker: 'ÁDÁM', text: 'Hozd ki mind az ötöt, aztán találj helyet a platón mind a nyolc raklapnak. Az autók nem fordulnak el maguktól. Gondolkozz előre: a következő állomás a kikötő, a rakomány úti célja pedig Dubaj.' },
+      { speaker: 'MESÉLŐ', text: 'Éjfél közeleg. A garázsban kilenc luxusautó között öt aranyozott raklapnyi pénz rekedt. A kijárat szűk, a hajó pedig nem vár örökké.' },
+      { speaker: 'ÁDÁM', text: 'Itt várok a kapu előtt a platóssal. A Rolls platóján már ott a Porsche és három raklap. Hozd ki a másik ötöt is! A sorrendet rád bízom.' },
+      { speaker: 'ÁDÁM', text: 'Rendezd mind a nyolc raklapot a plató első két sorába. Az autókat csak hosszirányban tolhatod. Ha elkészültünk, indulunk a kikötőbe. Az úti cél: Dubaj.' },
     ],
   },
   port: {
     number: '02', location: 'KONTÉNERTERMINÁL · 04:12', title: 'Két oldal titka', subtitle: 'A legnehezebb rész még a rakparton vár.', start: 'Jöhet a kirakodás →',
     pages: [
-      { speaker: 'MESÉLŐ', text: 'A plató begurul a daruk árnyékába. Nyolc aranyraklap, egy Porsche és egy hosszú éjszaka van mögöttetek. A távolban felbúg egy hajókürt. A dubaji járat rakodásra vár.' },
-      { speaker: 'ÁDÁM', text: 'Megérkeztünk. Ott a konténer, itt a béka. De nézd meg jól a raklapokat: csak két szemközti oldalon van villanyílás. Hiába férsz mellé, ha rossz oldalról közelítesz.' },
-      { speaker: 'ÁDÁM', text: 'A béka emelt raklappal csak előre-hátra gurul. A kanyarhoz szabad sarok kell. Néha előbb le kell tenned a pénzt, hogy másik oldalról férj hozzá. Mind a nyolcat pakold a konténerbe, aztán hozd ki a békát is. A hajó ránk vár.' },
+      { speaker: 'MESÉLŐ', text: 'A platós Rolls begurul a daruk alá. Nyolc aranyraklap érkezik a rakpartra. Felbúg a hajókürt: a dubaji járat hamarosan indul.' },
+      { speaker: 'ÁDÁM', text: 'Ott a konténer, itt a béka. A raklapoknak csak két szemközti oldalán van villanyílás. Oda kell férned valamelyikhez, különben nem tudod felemelni őket.' },
+      { speaker: 'ÁDÁM', text: 'Emelt raklappal csak előre-hátra gurulhatsz. Forduláshoz helyet kell hagynod; néha le is kell tenned a raklapot. Pakold be mind a nyolcat, majd hozd ki a békát is a konténerből!' },
     ],
   },
   ending: {
     number: '03', location: 'NYÍLT VÍZ · NAPKELTE', title: 'Irány Dubaj', subtitle: 'Nyolc raklap. Egy lezárt konténer. Sikeres fuvar.', start: 'Fuvar teljesítve ✓',
     pages: [
-      { speaker: 'MESÉLŐ', text: 'A konténer ajtaja bezárul. A daru lassan a fedélzetre emeli a rakományt. Mind a nyolc aranyraklap a helyén van. Az első napsugarak már a kikötő vizén csillannak.' },
-      { speaker: 'ÁDÁM', text: 'Szép munka. A garázsban még alig volt helyünk… most pedig minden a helyére került. A hajó elindult Dubaj felé. Ezt a fuvart nélküled nem oldottuk volna meg.' },
-      { speaker: 'MESÉLŐ', text: 'A hajó lassan eltűnik a horizonton. A rakpart újra elcsendesedik. Ádám zsebre teszi a kulcsot, és elmosolyodik. Egy fuvar véget ért. Vajon hová vezet majd a következő?' },
+      { speaker: 'MESÉLŐ', text: 'A konténer ajtaja bezárul, a daru a fedélzetre emeli a rakományt. Mind a nyolc raklap a helyén van. A vízen már a reggeli napfény csillog.' },
+      { speaker: 'ÁDÁM', text: 'Ez szép volt! A garázsban még alig tudtunk megmozdulni, most meg minden a helyére került. A hajó már Dubaj felé tart. Nélküled ez a fuvar nem sikerült volna.' },
+      { speaker: 'MESÉLŐ', text: 'A hajó eltűnik a horizonton. Ádám a platós Rolls ajtajának dől, és elmosolyodik. Egy fuvar véget ért. Vajon merre vezet majd a következő?' },
     ],
   },
 } satisfies Record<StoryChapter, { number: string; location: string; title: string; subtitle: string; start: string; pages: { speaker: string; text: string }[] }>;
@@ -51,7 +51,7 @@ function SceneArt({ chapter }: { chapter: StoryChapter }) {
       <path fill="#101f20" d="M27 85H245V151H27Z" /><path fill="#23372e" d="M31 88H241V92H31ZM31 97H241V101H31Z" />
       <path fill="#ffe1a0" d="M35 79H57V82H35ZM213 79H235V82H213Z" /><path fill="#45594a" d="M38 133H74V116H99V123H109V145H34V137H38Z" /><path fill="#c59d56" d="M41 132H66V136H41ZM78 120H94V129H78Z" />
       <path fill="#a9654c" d="M124 124H135V114H176V124H190V143H119V130H124Z" /><path fill="#74a4a1" d="M140 117H170V126H140Z" /><path fill="#e4c65e" d="M203 108H230V133H203ZM198 135H235V141H198Z" /><path stroke="#8d6c36" strokeWidth="3" d="M207 115H227M207 121H227M214 108V133" />
-      <path fill="#b5a375" d="M276 128H331V109H352L368 129V148H276Z" /><path fill="#43666b" d="M336 114H348L359 129H336Z" /><path fill="#d3ae59" d="M280 111H293V127H280ZM296 111H309V127H296ZM312 111H325V127H312Z" />
+      <path fill="#a99ca1" d="M276 128H331V109H347L353 118H364L372 130V148H276Z" /><path fill="#4b394e" d="M331 130H372V145H331Z" /><path fill="#e8e0c7" d="M352 119H365L370 128H352Z" /><path stroke="#e3e4d8" strokeWidth="2" d="M369 128V142M365 128V142M361 128V142" /><path stroke="#e9dfbc" d="M360 117V111L357 108M360 112L363 107" /><path fill="#43666b" d="M336 114H345L350 126H336Z" /><path fill="#d3ae59" d="M280 111H293V127H280ZM296 111H309V127H296ZM312 111H325V127H312Z" />
       <path fill="#080f15" d="M130 137H145V151H130ZM167 137H182V151H167ZM288 140H303V155H288ZM345 140H360V155H345Z" />
     </> : chapter === 'port' ? <>
       <path stroke="#567b7d" strokeWidth="5" fill="none" d="M22 141V48H149L52 76V141M149 48V101M273 136V30H372L301 57V136M372 30V85" />
@@ -118,8 +118,8 @@ export default function StoryDialog({ chapter, onClose, returnFocus }: { chapter
   }
   return createPortal(<div className={`story-backdrop story-${chapter}`}>
     <div ref={dialog} className="story-window" role="dialog" aria-modal="true" aria-labelledby={titleId} aria-describedby={textId} onKeyDown={handleKey}>
-      <div className="story-topline"><span>MTCSY <b>/</b> STORY MODE</span><button className="story-skip" onClick={onClose}>Átugrás <span aria-hidden="true">»</span></button></div>
-      <div className="story-art"><SceneArt chapter={chapter} /><span className="story-location">{story.location}</span><span className="story-rec" aria-hidden="true">● {chapter === 'ending' ? 'COMPLETE' : 'PLAY'}</span></div>
+      <div className="story-topline"><span>MTCSY <b>/</b> TÖRTÉNET</span><button className="story-skip" onClick={onClose}>Átugrás <span aria-hidden="true">»</span></button></div>
+      <div className="story-art"><SceneArt chapter={chapter} /><span className="story-location">{story.location}</span><span className="story-rec" aria-hidden="true">● {chapter === 'ending' ? 'VÉGE' : 'LEJÁTSZÁS'}</span></div>
       <div className="story-heading"><span className="story-chapter">{chapter === 'ending' ? 'EPILÓGUS' : `${story.number}. FEJEZET`}</span><h2 id={titleId}>{story.title}<span aria-hidden="true">_</span></h2><p>{story.subtitle}</p></div>
       <div className="story-dialogue">
         <div className="story-speaker"><AdamPortrait narrator={line.speaker !== 'ÁDÁM'} /><div><span>{line.speaker === 'ÁDÁM' ? 'A SOFŐR' : 'MTCSY KRÓNIKÁK'}</span><strong>{line.speaker}</strong></div><span className="story-signal" aria-hidden="true">▂▄▆</span></div>
@@ -129,7 +129,7 @@ export default function StoryDialog({ chapter, onClose, returnFocus }: { chapter
         </button>
       </div>
       <div className="story-navigation"><span className="story-page" aria-label={`${page + 1}. oldal, összesen ${story.pages.length}`}><span aria-hidden="true">{story.pages.map((_, index) => <i key={index} className={index <= page ? 'read' : ''} />)}</span>0{page + 1} / 0{story.pages.length}</span><button ref={nextButton} className="story-next" onClick={advance}>{last && finished ? story.start : 'Tovább →'}</button></div>
-      <p className="story-hint">{finished ? 'EGY JÓ LÉPÉS MINDENT MEGVÁLTOZTAT.' : 'KOPPINTS A SZÖVEG GYORSÍTÁSÁHOZ.'}</p>
+      <p className="story-hint">{finished ? 'EGY JÓ LÉPÉS MINDENT MEGVÁLTOZTAT.' : 'KATTINTS VAGY KOPPINTS A GYORSÍTÁSHOZ.'}</p>
     </div>
   </div>, document.body);
 }

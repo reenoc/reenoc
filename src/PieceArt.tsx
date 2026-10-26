@@ -7,6 +7,25 @@ const paints: Record<string, [string, string, string]> = {
   gold: ['#fff0c5', '#c6aa6c', '#70552c'], white: ['#ffffff', '#e1e5e7', '#677782'],
 };
 
+export const RollsTruckArt = memo(function RollsTruckArt() {
+  const id = useId().replace(/:/g, '');
+  return <svg className="rolls-truck-art" viewBox="0 0 340 100" role="img" aria-label="Ádám platós Rolls-Royce-a">
+    <defs><linearGradient id={`${id}-body`} x2="0" y2="1"><stop stopColor="#d9c9ad" /><stop offset=".35" stopColor="#796976" /><stop offset=".7" stopColor="#49364c" /><stop offset="1" stopColor="#201f2a" /></linearGradient><linearGradient id={`${id}-chrome`}><stop stopColor="#76828c" /><stop offset=".45" stopColor="#f6efe0" /><stop offset=".6" stopColor="#aab6bc" /><stop offset="1" stopColor="#e5e6dc" /></linearGradient></defs>
+    <ellipse cx="170" cy="88" rx="147" ry="9" fill="#0008" />
+    <rect x="32" y="54" width="27" height="39" rx="8" fill="#10181d" /><rect x="281" y="54" width="27" height="39" rx="8" fill="#10181d" />
+    <path d="M38 58L57 37L76 9Q170 -3 264 9L283 37L302 58V83Q170 96 38 83Z" fill={`url(#${id}-body)`} stroke="#b8b09e" strokeWidth="2" />
+    <path d="M83 12Q170 4 257 12L273 35Q170 27 67 35Z" fill="#193039" stroke="#d8d4c2" strokeWidth="3" /><path d="M105 15Q170 9 236 15" fill="none" stroke="#9ebfc3" strokeWidth="2" />
+    <path d="M69 39Q170 29 271 39L288 59Q170 48 52 59Z" fill="#c5b69b" stroke="#e9ddc1" /><path d="M170 34V54" stroke="#746763" />
+    <rect x="119" y="54" width="102" height="34" rx="2" fill={`url(#${id}-chrome)`} stroke="#e9ecdf" strokeWidth="2" />
+    <rect x="126" y="59" width="88" height="24" fill="#202a30" />{Array.from({ length: 14 }, (_, i) => <path key={i} d={`M${129 + i * 6} 59V83`} stroke="#d7dedb" strokeWidth="2" />)}
+    <path d="M117 53H223L215 48H125Z" fill="#f0e6d1" /><path d="M170 49V40M170 41L162 35L169 37L173 31L176 36L171 43" fill="none" stroke="#eee7d2" strokeWidth="2" />
+    <path d="M54 59H104V74H54ZM236 59H286V74H236Z" fill="#e5f3e7" stroke="#a4b9bc" strokeWidth="3" /><path d="M59 64H98M242 64H281" stroke="#adcecd" strokeWidth="3" />
+    <path d="M45 81H113M227 81H295" stroke={`url(#${id}-chrome)`} strokeWidth="5" />
+    <rect x="159" y="50" width="22" height="12" rx="1" fill="#e1d8c3" stroke="#9b9b92" /><text x="170" y="59" textAnchor="middle" fill="#333747" fontFamily="Georgia,serif" fontWeight="bold" fontSize="9">RR</text>
+    <text x="170" y="96" textAnchor="middle" fill="#e4d0a2" fontSize="6" letterSpacing="2">ROLLS-ROYCE · ÁDÁM EGYEDI PLATÓSA</text>
+  </svg>;
+});
+
 export const CarArt = memo(function CarArt({ model, color, vertical }: { model: string; color: string; vertical: boolean }) {
   const id = useId().replace(/:/g, '');
   const [light, mid, dark] = paints[color] ?? paints.blue;

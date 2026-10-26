@@ -1,12 +1,12 @@
 # MTCSY — Golden Garage
 
-Mobilra tervezett, magyar nyelvű logikai webjáték React, TypeScript és Vite használatával.
+Telefonon, táblagépen és PC-n játszható, magyar nyelvű logikai webjáték React, TypeScript és Vite használatával.
 
 [Játék megnyitása telefonon](https://reenoc.github.io/reenoc/)
 
 ## Két egymást követő szint
 
-Az **1. szint** a garázs és Ádám platójának megtöltése, a **2. szint** a kikötői kirakodás. Csak az első szint teljesítése után lehet továbblépni. A kikötőből nincs visszaút a garázsba, a hajóindulás pedig lezárja a játékot. Az aktuális feladaton belüli visszavonás és újrakezdés a hajó feladásáig érhető el.
+Az **1. szint** a garázs kiürítése és a platós Rolls megrakása, a **2. szint** a kikötői kirakodás. Csak az első szint teljesítése után lehet továbblépni. A kikötőből nincs visszaút a garázsba, a hajóindulás pedig lezárja a játékot. Az aktuális feladaton belüli visszavonás és újrakezdés a hajó feladásáig érhető el.
 
 A **Nehéz** és **Profi** az első szint két nehézségi változata: kilenc luxusautó és öt aranyozott pénzes raklap foglal el 26 mezőt a 36-ból. Alapból a Profi változat indul.
 Mindkettő megoldhatóságát teljes, tesztben visszajátszott lépéssor igazolja. A kezdő kijárat megnyitása több autó átrendezését igényli.
@@ -23,7 +23,7 @@ Mindkettő megoldhatóságát teljes, tesztben visszajátszott lépéssor igazol
 - Kezelés: koppintás és iránygombok, érintéses húzás, vagy a billentyűzet nyilai. Az autóknál a ferde húzás is a jármű hosszának irányát követi.
 - Az első szinten a garázs és a plató között lehet váltani a rakodáshoz. Visszavonás, újrakezdés és nehézségválasztás elérhető. A játékállás frissítéskor újraindul.
 
-A játéktér lefogja az érintéses görgetést; az oldalt a pályán kívül lehet görgetni. Az autók és a pénzkötegekkel rakott, aranyozott raklapok helyi SVG-grafikák, külső képszolgáltatás nélkül.
+A teljes játék a böngészőablakhoz igazodik, görgetés nélkül. Széles ablakban a pálya mellett külön oszlopban látszik a feladat és a vezérlés; rövid telefonos ablakban a pálya és a vezérlők osztoznak az alsó soron. A súgó és a történet lapozható. Az érintéses húzást a pálya kezeli, az ablak átméretezése megőrzi az aktuális játékállást. Ádám egyedi platós Rolls-Royce-a, a luxusautók és az aranyozott raklapok helyi SVG-grafikák.
 
 ## Második pálya: kikötő és Dubaj
 
@@ -75,12 +75,13 @@ A `dist/` statikus kimenetét a `gh-pages` ág gyökerére kell publikálni, `.n
 
 ## Szerkezet
 
-Telefonon a történet a teljes rendelkezésre álló képernyőt kitölti, a pálya szélesebb, a fejléc tömörebb. A `viewport-fit=cover`, a `100dvh` és a safe-area térközök követik a Safari változó magasságát, a kamerakivágást és az alsó gesztussávot; a nagyítás továbbra is engedélyezett.
+Az elrendezés a rendelkezésre álló szélességhez és magassághoz igazodik. A CSS container query egységei a megmaradó helyre méretezik a pályát; a `100dvh` és a safe-area térközök követik a Safari eszköztárát, a kamerakivágást és az alsó gesztussávot. A nagyítás engedélyezett. A súgó külön, lapozható ablakban nyílik meg; mögötte a játék nem vezérelhető.
 
 - `src/StoryDialog.tsx`: eredeti magyar történet három retró jelenettel (garázs, kikötő, hajóindulás), pixelgrafikával és betűnkénti kiírással. Koppintással gyorsítható, átugorható, a fejléc Történet gombjával újraolvasható. Csökkentett mozgásnál a teljes szöveg azonnal látszik; a párbeszédablak alatt a játék nem vezérelhető.
 - `src/game.ts`: mozgás, ütközések, felrakodás és dokkolási győzelmi feltétel.
 - `src/levels.json`: a két pálya kiinduló elrendezése.
-- `src/PieceArt.tsx`: fémes luxusautók és aranyozott raklapok SVG-grafikái.
+- `src/PieceArt.tsx`: fémes luxusautók, aranyozott raklapok és a platós Rolls SVG-grafikái.
+- `src/HelpDialog.tsx`: képernyőn belül maradó, lapozható súgó.
 - `src/App.tsx`: garázs, érintéses kezelés, rakodómezők és kampányátmenet.
 - `src/port.ts`, `src/PortGame.tsx`: béka, kétoldali emelés, fordulási geometria és konténeres pálya.
 - `src/port.test.ts`, `src/PortGame.test.tsx`: teljes kirakodási megoldás és kikötői felülettesztek.
