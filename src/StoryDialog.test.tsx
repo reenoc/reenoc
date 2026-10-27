@@ -51,8 +51,9 @@ describe('Retró történet', () => {
     await user.click(screen.getByRole('button', { name: /Átugrás/ }));
     await user.click(screen.getByRole('button', { name: 'Lamborghini Aventador, 4. sor, 4. oszlop' }));
     await user.keyboard('{ArrowUp}');
-    const replay = screen.getByRole('button', { name: 'Történet' });
+    const replay = screen.getByRole('button', { name: 'Menü' });
     await user.click(replay);
+    await user.click(screen.getByRole('button', { name: 'Történet' }));
     expect(document.querySelector('.game-shell')!.hasAttribute('inert')).toBe(true);
     await user.keyboard('{ArrowUp}{ArrowDown}');
     await user.keyboard('{Escape}');
@@ -82,7 +83,16 @@ describe('Retró történet', () => {
     }
     expect(screen.queryByRole('dialog')).toBeNull();
     solution.exit.forEach(action);
-    fireEvent.click(screen.getByRole('button', { name: /Konténer lezárása/ }));
+    const completed = screen.getByRole('dialog', { name: 'Kirakodás kész!' });
+    const next = screen.getByRole('button', { name: 'Tovább: indulás Dubajba →' });
+    expect(document.activeElement).toBe(next);
+    expect(document.querySelector('.game-shell')!.hasAttribute('inert')).toBe(true);
+    const score = completed.querySelector('.completion-score')!.textContent;
+    fireEvent.keyDown(next, { key: 'Escape' });
+    fireEvent.keyDown(board, { key: 'ArrowUp' });
+    expect(screen.getByRole('dialog', { name: 'Kirakodás kész!' })).toBe(completed);
+    expect(completed.querySelector('.completion-score')!.textContent).toBe(score);
+    fireEvent.click(next);
     expect(screen.getByRole('dialog', { name: 'Irány Dubaj' })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: /Átugrás/ }));
     expect(screen.getByRole('heading', { name: 'Úton Dubajba!' })).toBeTruthy();

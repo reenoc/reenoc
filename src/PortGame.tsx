@@ -3,6 +3,7 @@ import { CarArt, PalletArt, RollsTruckArt } from './PieceArt';
 import { type Direction, type Piece } from './game';
 import StoryDialog, { type StoryChapter } from './StoryDialog';
 import HelpDialog from './HelpDialog';
+import GameDialog from './GameDialog';
 import { CLOCKWISE, PORT_HEIGHT, PORT_WIDTH, canLift, createPort, dispatchPort, entrySides, isContainer, isPortFloor, isPortGoal, liftPort, lowerPort, movePort, portDocked, portReady, turnPort, walkPort, type PortState } from './port';
 
 const arrows: Record<Direction, string> = { up: '↑', right: '→', down: '↓', left: '←' };
@@ -26,9 +27,10 @@ export default function PortGame({ cargo, campaignMoves = 0 }: { cargo?: Piece[]
   const [selected, setSelected] = useState(() => createPort(cargo).pallets[3].id);
   const [message, setMessage] = useState('Válassz raklapot, és állj a békával az egyik villanyílás mellé.');
   const [help, setHelp] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [story, setStory] = useState<StoryChapter | null>('port');
   const board = useRef<HTMLDivElement>(null);
-  const storyTrigger = useRef<HTMLButtonElement>(null);
+  const menuTrigger = useRef<HTMLButtonElement>(null);
   const helpTrigger = useRef<HTMLButtonElement>(null);
   const gesture = useRef<{ x: number; y: number; pointer: number } | null>(null);
   const state = history[history.length - 1];
@@ -62,7 +64,7 @@ export default function PortGame({ cargo, campaignMoves = 0 }: { cargo?: Piece[]
     setMessage(p.entry === 'horizontal' ? 'Ennek a raklapnak balról és jobbról van villanyílása. Felülről és alulról zárt.' : 'Ennek a raklapnak felül és alul van villanyílása. Balról és jobbról zárt.');
   }
   function onKeyDown(event: KeyboardEvent) {
-    if (story || help || state.dispatched) return;
+    if (story || help || menuOpen || ready || state.dispatched) return;
     if (event.altKey || event.ctrlKey || event.metaKey) return;
     const keys: Record<string, Direction> = { ArrowUp: 'up', ArrowRight: 'right', ArrowDown: 'down', ArrowLeft: 'left' };
     if (keys[event.key]) { event.preventDefault(); step(keys[event.key]); }
@@ -70,16 +72,25 @@ export default function PortGame({ cargo, campaignMoves = 0 }: { cargo?: Piece[]
     else if (event.key.toLowerCase() === 'e') { event.preventDefault(); turn('right'); }
   }
   function reset() { const fresh = createPort(cargo); gesture.current = null; setHistory([fresh]); setSelected(fresh.pallets[3].id); setMessage('Új kirakodás. A sorrend és a szabadon hagyott fordulók döntik el, sikerül-e.'); }
-  return <div className={`game-shell port-shell ${state.dispatched ? 'is-complete' : ''}`} onKeyDown={onKeyDown} inert={story !== null || help}>
-    {story && <StoryDialog key={story} chapter={story} returnFocus={storyTrigger.current} onClose={() => setStory(null)} />}
+  return <div className={`game-shell focused-play port-shell ${state.dispatched ? 'is-complete' : ''}`} onKeyDown={onKeyDown} inert={story !== null || help || menuOpen || ready || state.dispatched}>
+    {story && <StoryDialog key={story} chapter={story} returnFocus={menuTrigger.current} onClose={() => setStory(null)} />}
     {help && <HelpDialog chapter="port" returnFocus={helpTrigger.current} onClose={() => setHelp(false)} />}
-    <header className="topbar"><div className="brand"><span className="brand-mark" aria-hidden="true">M<span>//</span></span><div><strong>MTCSY</strong><span>PORT OF GOLD</span></div></div><div className="header-actions"><button ref={storyTrigger} className="story-replay" onClick={() => setStory(state.dispatched ? 'ending' : 'port')}>Történet</button><button ref={helpTrigger} className="icon-button" aria-label="Kikötői szabályok" aria-expanded={help} onClick={() => setHelp(!help)}>?</button></div></header>
+    {menuOpen && <GameDialog title="Játékmenü" eyebrow="2. SZINT · KIKÖTŐ" returnFocus={menuTrigger.current} onClose={() => setMenuOpen(false)}>
+      <p>Mind a nyolc raklapot tedd a konténerbe, majd hozd ki a békát is.</p>
+      <div className="menu-actions"><button onClick={() => { setMenuOpen(false); setStory('port'); }}>Történet</button><button onClick={() => { setMenuOpen(false); setHelp(true); }}>Kikötői szabályok</button></div>
+      <button className="dialog-primary" data-primary onClick={() => setMenuOpen(false)}>Folytatás →</button>
+    </GameDialog>}
+    {ready && !state.dispatched && <GameDialog title="Kirakodás kész!" eyebrow="2. SZINT TELJESÍTVE" completion>
+      <p>Nyolc raklap bent, a béka kint. Indulhat a hajó!</p><div className="completion-score">{state.moves}<small>lépés</small></div>
+      <button className="dialog-primary" data-primary onClick={() => commit(dispatchPort(state), 'A konténer lezárva. Indulás Dubajba!', 'Előbb fejezd be a rakodást.')}>Tovább: indulás Dubajba →</button>
+    </GameDialog>}
+    {state.dispatched && !story && <GameDialog title="Úton Dubajba!" eyebrow="A FUVAR TELJESÍTVE" completion>
+      <ShipArt /><p>Mindkét szint teljesítve. A nagy fuvar vége.</p><div className="completion-score">{campaignMoves + state.moves}<small>lépés összesen</small></div>
+      <button className="dialog-primary" data-primary onClick={() => setStory('ending')}>Történet</button>
+    </GameDialog>}
+    <header className="topbar"><div className="brand"><span className="brand-mark" aria-hidden="true">M<span>//</span></span><div><strong>MTCSY</strong><span>2. SZINT · KIKÖTŐ</span></div></div><div className="play-progress" aria-label="Kikötői játékállás"><span title="Konténerben">{docked}<small>/8</small></span><span className="progress-jack" title="Béka">{state.carrying ? 'EMELVE' : 'ÜRES'}</span><strong title="Lépések">{state.moves.toString().padStart(2, '0')}</strong></div><div className="header-actions"><button ref={menuTrigger} className="story-replay" onClick={() => setMenuOpen(true)}>Menü</button><button ref={helpTrigger} className="icon-button" aria-label="Kikötői szabályok" aria-expanded={help} onClick={() => setHelp(!help)}>?</button></div></header>
     <main className="play-layout"><section className="mission-overview">
-      <div className="port-route"><span>01 Garázs ✓</span><b>→</b><strong>02 Kikötő</strong><b>→</b><span>Dubaj</span></div>
-      <div className="level-line"><span className="level-tag">2. SZINT / KIKÖTŐ</span><span className="difficulty"><i /><i /><i /> KÉT OLDAL</span></div>
-      <h1>Irány Dubaj.</h1><p className="intro">2. szint · Nyolc raklap a Dubajba tartó hajóra.</p>
-      <p className="port-brief">Csak a két jelölt oldal felől emelhetsz. A fordulóhoz hagyj helyet.</p>
-      <div className="stats" aria-label="Kikötői játékállás"><div><span>KONTÉNERBEN</span><strong>{docked}<small>/8</small></strong></div><div><span>BÉKA</span><strong className="jack-status">{state.carrying ? 'EMELVE' : 'ÜRES'}</strong></div><div><span>LÉPÉSEK</span><strong>{state.moves.toString().padStart(2, '0')}</strong></div></div>
+      <h1 className="sr-only">Irány Dubaj.</h1>
       </section><section className="play-stage"><div className="port-scene">
       <div className="port-destination"><span>ÁDÁM FUVARJA</span><strong>DXB / DUBAJ</strong><span>8 ARANYRAKLAP</span></div>
       <div className="port-board" ref={board} role="group" aria-label="Kikötő, 8 × 10 mező">
@@ -101,8 +112,6 @@ export default function PortGame({ cargo, campaignMoves = 0 }: { cargo?: Piece[]
       <div className="port-legend"><span><i className="entry-key" /> Villanyílás</span><span><i className="goal-key" /> Raklaphely</span><span>↑ KONTÉNER · ROLLS ↓</span></div>
       </div></section><section className="mission-controls">
       {!state.dispatched && !ready && <><section className="port-controls" aria-label="Béka vezérlése"><div className="port-selection"><span>{state.carrying ? 'EMELT RAKLAP' : 'KIVÁLASZTVA'}</span><strong>{active ? `Aranyraklap ${active.number.toString().padStart(2, '0')}` : 'Válassz raklapot'}</strong><small>{active ? active.entry === 'horizontal' ? '↔ Balról / jobbról emelhető' : '↕ Felülről / alulról emelhető' : 'Két jelölt oldala van'}</small><button className="port-lift" disabled={!state.carrying && (!active || !canLift(state, active.id))} onClick={handleLift}>{state.carrying ? '↓ Raklap letétele' : '↑ Raklap emelése'}</button></div><div className="dpad port-dpad">{(['up', 'left', 'down', 'right'] as const).map(d => <button key={d} className={d} aria-label={`Béka ${names[d].toLowerCase()}`} disabled={movePort(state, d) === state} onClick={() => step(d)}>{arrows[d]}</button>)}</div></section><div className="port-steering"><button disabled={turnPort(state, 'left') === state} onClick={() => turn('left')} aria-label="Fordítás balra">↶ Fordítás</button><p>Emelve csak előre-hátra.<br />A kanyarhoz szabad sarok kell.</p><button disabled={turnPort(state, 'right') === state} onClick={() => turn('right')} aria-label="Fordítás jobbra">Fordítás ↷</button></div><p className="message" role="status">{docked === 8 && !ready ? 'Minden raklap a helyén. Most az üres békát is hozd ki a konténerből!' : message}</p></>}
-      {ready && !state.dispatched && <section className="port-ready"><h2>{ready ? 'Lezárható a konténer.' : 'A rakomány bent van.'}</h2><p>{ready ? 'Nyolc raklap bent, a béka kint. Indulhat a dubaji hajó!' : 'Előbb tedd le a raklapot, és hozd ki a békát az ajtón.'}</p><button disabled={!ready} onClick={() => commit(dispatchPort(state), 'A konténer lezárva. Indulás Dubajba!', 'Előbb fejezd be a rakodást.')}>Konténer lezárása · Indulás Dubajba →</button></section>}
-      {state.dispatched && <section className="success port-success" role="status"><ShipArt /><h2>Úton Dubajba!</h2><p>Mind a nyolc raklap a hajón van. A kirakodást {state.moves - 1} lépésből oldottad meg.{` A teljes fuvar ${campaignMoves + state.moves} lépés volt.`}</p><p><strong>Mindkét szint teljesítve. A nagy fuvar vége.</strong></p></section>}
       {!state.dispatched && <div className="bottom-actions"><button disabled={history.length < 2} onClick={() => { gesture.current = null; setHistory(previous => previous.slice(0, -1)); setMessage('Az utolsó mozdulatot visszavontad.'); }}>↶ Visszavonás</button><button onClick={reset}>↻ Kikötő újrakezdése</button></div>}
     </section></main><footer>MTCSY <span>PORT OF GOLD · KÖVETKEZŐ ÁLLOMÁS: DUBAJ</span></footer>
   </div>;

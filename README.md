@@ -6,7 +6,7 @@ Telefonon, táblagépen és PC-n játszható, magyar nyelvű logikai webjáték 
 
 ## Két egymást követő szint
 
-Az **1. szint** a garázs kiürítése és a platós Rolls megrakása, a **2. szint** a kikötői kirakodás. Csak az első szint teljesítése után lehet továbblépni. A kikötőből nincs visszaút a garázsba, a hajóindulás pedig lezárja a játékot. Az aktuális feladaton belüli visszavonás és újrakezdés a hajó feladásáig érhető el.
+Az **1. szint** a garázs kiürítése és a platós Rolls megrakása, a **2. szint** a kikötői kirakodás. Csak az első szint teljesítése után lehet továbblépni. A kikötőből nincs visszaút a garázsba, a hajóindulás pedig lezárja a játékot. Az aktuális feladat megoldása közben visszavonás és újrakezdés is elérhető. A teljesítés után külön továbbgomb visz a következő feladatra.
 
 A **Nehéz** és **Profi** az első szint két nehézségi változata: kilenc luxusautó és öt aranyozott pénzes raklap foglal el 26 mezőt a 36-ból. Alapból a Profi változat indul.
 Mindkettő megoldhatóságát teljes, tesztben visszajátszott lépéssor igazolja. A kezdő kijárat megnyitása több autó átrendezését igényli.
@@ -21,13 +21,13 @@ Mindkettő megoldhatóságát teljes, tesztben visszajátszott lépéssor igazol
 - Koppints a szabad, sárga **+ FELRAKÁS** mezőre, vagy használd a felrakodási panel gombját. A foglalt bejárat okát a panel mindig kiírja.
 - Az első pálya teljesítéséhez **mind a nyolc pénzes raklapot a plató első két sorának aranyszegélyes dokkjaira kell rendezni**. A bejáraton álló raklap még nem számít késznek.
 - Kezelés: koppintás és iránygombok, érintéses húzás, vagy a billentyűzet nyilai. Az autóknál a ferde húzás is a jármű hosszának irányát követi.
-- Az első szinten a garázs és a plató között lehet váltani a rakodáshoz. Visszavonás, újrakezdés és nehézségválasztás elérhető. A játékállás frissítéskor újraindul.
+- Az első szinten a garázs és a plató között lehet váltani a rakodáshoz. Amint mind az öt raklap kijutott, egy külön ablak nagy **Tovább a rakodáshoz** gombja visz a platóhoz. Visszavonás és újrakezdés elérhető; a nehézség a Menü gomb mögött választható. A játékállás frissítéskor újraindul.
 
-A teljes játék a böngészőablakhoz igazodik, görgetés nélkül. Széles ablakban a pálya mellett külön oszlopban látszik a feladat és a vezérlés; álló telefonos nézetben a pálya teljes szélességet kap, a négy iránygomb pedig közvetlenül alatta, egy sorban látszik. A súgó és a történet lapozható. Az érintéses húzást a pálya kezeli, az ablak átméretezése megőrzi az aktuális játékállást. Ádám egyedi platós Rolls-Royce-a, a luxusautók és az aranyozott raklapok helyi SVG-grafikák.
+A teljes játék a böngészőablakhoz igazodik, görgetés nélkül. Széles ablakban a pálya mellett külön oszlopban látszik a feladat és a vezérlés; álló telefonos nézetben a pálya teljes szélességet kap, a négy iránygomb pedig közvetlenül alatta, egy sorban látszik. Játék közben a nagy cím, a leírás és a nehézségválasztó helyét a pálya kapja; a beállítások és a történet a Menü gomb mögött érhetők el. A súgó és a történet lapozható. Az érintéses húzást a pálya kezeli, az ablak átméretezése megőrzi az aktuális játékállást. Ádám egyedi platós Rolls-Royce-a, a luxusautók és az aranyozott raklapok helyi SVG-grafikák.
 
 ## Második pálya: kikötő és Dubaj
 
-A sikeres platórakodás után a **Következő pálya: Kikötő** gomb a nyolc tényleges raklapot továbbviszi a kikötőbe. Nincs gyakorlógomb vagy szintátugrás; a korábbi `?stage=port` link is az első szintet indítja. Az előző szintre visszatérő gomb nincs.
+A sikeres platórakodás után automatikusan megjelenő befejező ablak nagy **Tovább a kikötőbe** gombja a nyolc tényleges raklapot továbbviszi a kikötőbe. Nincs gyakorlógomb vagy szintátugrás; a korábbi `?stage=port` link is az első szintet indítja. Az előző szintre visszatérő gomb nincs.
 
 - A béka egy mezőt foglal, az emelt raklap közvetlenül előtte helyezkedik el.
 - Minden raklapnak **két szemközti villanyílása** van, sárga jelöléssel. Csak ezek felől lehet emelni; a másik két oldal zárt.
@@ -37,7 +37,7 @@ A sikeres platórakodás után a **Következő pálya: Kikötő** gomb a nyolc t
 - A pénz átmenetileg bárhol letehető, és később másik használható oldalról is felvehető.
 - A konténernek kétmezős ajtaja és nyolc kijelölt célmezője van. A raklapokkal nem szabad elzárni a később szükséges megközelítést és fordulóhelyet.
 - Mind a nyolc raklap letétele után az **üres békát is ki kell hozni** a konténerből. Csak ekkor zárható le a konténer és indítható a Dubajba tartó hajó.
-- Billentyűzet: nyilak a haladáshoz, Q / E a forduláshoz. A kirakodás közben visszavonás és a kikötő újrakezdése is elérhető. A hajó feladása után ezek megszűnnek, és a befejező történet következik.
+- Billentyűzet: nyilak a haladáshoz, Q / E a forduláshoz. A kirakodás közben visszavonás és a kikötő újrakezdése is elérhető. A kirakodás teljesítésekor középre kerül a nagy **Tovább: indulás Dubajba** gomb. A hajó feladása után a befejező történet, majd egy külön záróképernyő következik.
 
 A `src/test/port-solution.json` 176 lépéses, ütközések és kétoldali megközelítés szempontjából is ellenőrzött megoldást tartalmaz. Nem minimumlépésszám, és a játékcsomag nem importálja.
 
@@ -77,11 +77,12 @@ A `dist/` statikus kimenetét a `gh-pages` ág gyökerére kell publikálni, `.n
 
 Az elrendezés a rendelkezésre álló szélességhez és magassághoz igazodik. A CSS container query egységei a megmaradó helyre méretezik a pályát; a `100dvh` és a safe-area térközök követik a Safari eszköztárát, a kamerakivágást és az alsó gesztussávot. A nagyítás engedélyezett. A súgó külön, lapozható ablakban nyílik meg; mögötte a játék nem vezérelhető.
 
-- `src/StoryDialog.tsx`: eredeti magyar történet három retró jelenettel (garázs, kikötő, hajóindulás), pixelgrafikával és betűnkénti kiírással. Koppintással gyorsítható, átugorható, a fejléc Történet gombjával újraolvasható. Csökkentett mozgásnál a teljes szöveg azonnal látszik; a párbeszédablak alatt a játék nem vezérelhető.
+- `src/StoryDialog.tsx`: eredeti magyar történet három retró jelenettel (garázs, kikötő, hajóindulás), pixelgrafikával és betűnkénti kiírással. Koppintással gyorsítható, átugorható, a Menü / Történet gombbal újraolvasható. Csökkentett mozgásnál a teljes szöveg azonnal látszik; a párbeszédablak alatt a játék nem vezérelhető.
 - `src/game.ts`: mozgás, ütközések, felrakodás és dokkolási győzelmi feltétel.
 - `src/levels.json`: a két pálya kiinduló elrendezése.
 - `src/PieceArt.tsx`: fémes luxusautók, aranyozott raklapok és a platós Rolls SVG-grafikái.
 - `src/HelpDialog.tsx`: képernyőn belül maradó, lapozható súgó.
+- `src/GameDialog.tsx`: billentyűzettel is használható menü és automatikus szintteljesítési ablakok, kiemelt továbbgombbal.
 - `src/App.tsx`: garázs, érintéses kezelés, rakodómezők és kampányátmenet.
 - `src/port.ts`, `src/PortGame.tsx`: béka, kétoldali emelés, fordulási geometria és konténeres pálya.
 - `src/port.test.ts`, `src/PortGame.test.tsx`: teljes kirakodási megoldás és kikötői felülettesztek.

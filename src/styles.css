@@ -284,3 +284,61 @@ footer { display:none; }
 @media (max-width:759px) and (orientation:portrait) and (max-height:650px) {
   .game-shell .dpad { grid-template-rows:36px; }.game-shell .dpad button { min-height:36px; }
 }
+/* During play, keep the frame clear and move explanations/settings into the menu. */
+.focused-play .mission-overview { display:flex; flex-direction:column; align-items:stretch; padding:0; border:0; background:none; gap:5px; }
+.focused-play .play-stage { gap:0; }
+.focused-play .queue-line,.focused-play .scene-label { display:none; }
+.focused-play .scene { width:min(100cqw,calc(100cqh - 18px)); padding:4px 4px 0; }
+.focused-play .scene.truck { width:min(100cqw,calc(100cqh - 22px - clamp(24px,14cqh,76px))); }
+.focused-play .selection { display:none; }
+.focused-play .message { min-height:0; }
+.play-progress { display:flex; gap:10px; align-items:center; padding:5px 9px; border:1px solid #64714b; border-radius:5px; color:#e8d69c; font-size:12px; white-space:nowrap; }
+.play-progress small { color:#acba99; font-size:9px; }.play-progress strong { font-variant-numeric:tabular-nums; color:#ecebd7; font-size:12px; }.progress-jack { font-size:9px; color:#bdd1af; }
+.game-dialog-backdrop { position:fixed; inset:0; z-index:110; display:flex; align-items:center; justify-content:center; padding:max(12px,var(--safe-top)) max(12px,var(--safe-right)) max(12px,var(--safe-bottom)) max(12px,var(--safe-left)); background:#07130eed; backdrop-filter:blur(8px); }
+.game-dialog { position:relative; width:min(480px,100%); padding:26px; border:1px solid #baa268; border-radius:12px; background:linear-gradient(145deg,#253c2d,#13251c); box-shadow:0 18px 70px #0008; color:#ece9d3; }
+.game-dialog h2 { margin:8px 0 12px; font-size:29px; line-height:1.15; color:#ffe4a0; }
+.game-dialog p { margin:12px 0; font-size:14px; line-height:1.6; color:#cad8bf; }
+.dialog-eyebrow { display:block; font-size:9px; letter-spacing:1.5px; color:#c5b075; }
+.dialog-close { position:absolute; right:10px; top:10px; min-height:30px; width:30px; border:1px solid #5d7950; border-radius:5px; background:#283e29; }
+.dialog-primary { display:block; width:100%; min-height:54px; margin-top:18px; padding:12px 10px; background:#f0cd74; border:1px solid #ffecb3; border-bottom:4px solid #9b7e36; border-radius:7px; color:#1e321f; font-size:16px; font-weight:800; }
+.dialog-primary:focus-visible { outline:3px solid #ffefad; outline-offset:4px; }
+.completion-dialog { text-align:center; }
+.completion-dialog h2 { font-size:34px; }.completion-dialog .dialog-eyebrow { font-size:10px; }
+.completion-symbol { display:block; font-size:40px; color:#f3d27e; margin:12px 0; }
+.completion-score { font-size:46px; line-height:1.2; font-weight:800; color:#f2e4bb; margin:14px 0; font-variant-numeric:tabular-nums; }
+.completion-score small { display:block; font-size:11px; font-weight:400; letter-spacing:1px; color:#a7c1a1; margin-top:4px; }
+.menu-actions { display:flex; gap:8px; margin:16px 0; }
+.menu-actions button { flex:1; border:1px solid #758455; background:#34492e; border-radius:5px; padding:10px 7px; min-height:40px; font-size:12px; }
+.difficulty-picker { min-width:0; margin:16px 0; padding:10px; border:1px solid #65794c; border-radius:6px; }
+.difficulty-picker legend { font-size:11px; color:#d6c68b; }.difficulty-picker small { display:block; font-size:10px; line-height:1.5; color:#aebf9f; margin-top:8px; }
+@media (min-width:760px), (orientation:landscape) and (min-width:550px) {
+  .focused-play .play-layout { grid-template-columns:minmax(0,1fr) clamp(260px,26vw,330px); }
+}
+@media (max-width:759px) and (orientation:portrait) {
+  .game-shell.focused-play { grid-template-rows:32px minmax(0,1fr); gap:5px; padding:max(4px,var(--safe-top)) max(4px,var(--safe-right)) max(4px,var(--safe-bottom)) max(4px,var(--safe-left)); }
+  .focused-play .topbar { padding-bottom:3px; gap:6px; }.focused-play .brand { gap:6px; }
+  .focused-play .brand-mark { width:26px; height:26px; font-size:18px; }.focused-play .brand strong { font-size:12px; letter-spacing:1px; }.focused-play .brand>div>span { font-size:6px; letter-spacing:.4px; }
+  .focused-play .header-actions { gap:5px; }.focused-play .story-replay,.focused-play .icon-button { min-height:28px; padding:4px 8px; font-size:10px; }.focused-play .icon-button { width:28px; padding:0; }
+  .focused-play .play-progress { gap:7px; padding:4px 6px; font-size:11px; }.focused-play .play-progress strong { font-size:11px; }.focused-play .play-progress small { font-size:8px; }.focused-play .progress-jack { font-size:8px; }
+  .focused-play .scene-tabs button { min-height:30px; padding:5px 3px; }.focused-play .scene-tabs small { display:none; }
+  .focused-play .mission-controls { gap:4px; }.focused-play .message { font-size:9px; line-height:1.25; }
+  .focused-play .truck-cab { height:clamp(22px,7cqh,42px); }.focused-play .scene.truck { width:min(100cqw,calc(100cqh - 22px - clamp(22px,7cqh,42px))); }
+  .focused-play .loading-panel { padding:5px 7px; gap:3px 7px; }.focused-play .loading-heading strong { font-size:10px; }.focused-play .loading-panel p { font-size:9px; }.focused-play .load-button { min-height:30px; font-size:10px; }
+}
+@media (max-width:380px) {
+  .game-dialog { padding:19px; }.game-dialog h2 { font-size:26px; }.completion-dialog h2 { font-size:29px; }.game-dialog p { font-size:13px; }.dialog-primary { font-size:14px; }
+}
+@media (max-height:500px) {
+  .game-dialog { padding:14px; }.game-dialog h2,.completion-dialog h2 { font-size:24px; margin:5px 0; }.game-dialog p { margin:7px 0; font-size:12px; line-height:1.4; }
+  .completion-symbol { display:none; }.completion-score { font-size:30px; margin:8px 0; }.completion-score small { font-size:9px; }.completion-dialog .ship-art { height:40px; }.completion-dialog .dialog-eyebrow { font-size:9px; }
+  .dialog-primary { min-height:38px; font-size:13px; margin-top:10px; padding:7px; }.dialog-eyebrow { font-size:8px; }
+  .menu-actions { margin:8px 0; }.menu-actions button { min-height:28px; padding:6px; font-size:11px; }.difficulty-picker { margin:8px 0; padding:6px; }.difficulty-picker small { font-size:9px; margin-top:4px; }
+}
+@media (max-height:400px) {
+  .menu-dialog { display:grid; grid-template-columns:1fr 1fr; gap:5px 12px; width:min(650px,100%); padding:10px; }
+  .menu-dialog .dialog-eyebrow,.menu-dialog h2,.menu-dialog>.dialog-primary { grid-column:1/-1; }.menu-dialog>p { display:none; }
+  .menu-dialog .menu-actions { flex-direction:column; grid-column:1; margin:0; gap:4px; }.menu-dialog .difficulty-picker { grid-column:2; margin:0; padding:4px; }
+  .menu-dialog .dialog-primary { margin-top:3px; min-height:32px; }.menu-dialog h2 { font-size:22px; margin:2px 0; }
+}
+
+.completion-dialog:has(.ship-art) .completion-symbol { display:none; }

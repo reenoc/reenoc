@@ -88,7 +88,7 @@ export default function StoryDialog({ chapter, onClose, returnFocus }: { chapter
     nextButton.current?.focus({ preventScroll: true });
     return () => {
       document.body.style.overflow = previousOverflow;
-      queueMicrotask(() => { if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true }); });
+      queueMicrotask(() => { if (!document.querySelector('[aria-modal="true"]') && previousFocus?.isConnected) previousFocus.focus({ preventScroll: true }); });
     };
   }, [returnFocus]);
   useEffect(() => {

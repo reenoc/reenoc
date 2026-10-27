@@ -22,7 +22,7 @@ export default function HelpDialog({ chapter, onClose, returnFocus }: { chapter:
   const tips = guides[chapter];
   useEffect(() => {
     dismiss.current?.focus({ preventScroll: true });
-    return () => { queueMicrotask(() => { if (returnFocus?.isConnected) returnFocus.focus({ preventScroll: true }); }); };
+    return () => { queueMicrotask(() => { if (!document.querySelector('[aria-modal="true"]') && returnFocus?.isConnected) returnFocus.focus({ preventScroll: true }); }); };
   }, [returnFocus]);
   function onKeyDown(event: KeyboardEvent) {
     event.stopPropagation();

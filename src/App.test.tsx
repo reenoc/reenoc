@@ -59,10 +59,34 @@ describe('Golden Garage játékfelület', () => {
 
   it('különböző nehéz pályák között vált, és újrakezdéskor megőrzi a választást', async () => {
     const user = userEvent.setup(); render(<App />); fireEvent.click(screen.getByRole('button', { name: /Átugrás/ }));
+    await user.click(screen.getByRole('button', { name: 'Menü' }));
     await user.click(screen.getByRole('button', { name: /^Nehéz/ }));
     expect(screen.getByRole('button', { name: 'Pénz 1, 1. sor, 3. oszlop' })).toBeTruthy();
     await user.click(screen.getByRole('button', { name: /Újrakezdés/ }));
+    await user.click(screen.getByRole('button', { name: 'Menü' }));
     expect(screen.getByRole('button', { name: /^Nehéz/ }).getAttribute('aria-pressed')).toBe('true');
+    await user.click(screen.getByRole('button', { name: 'Folytatás →' }));
     expect(screen.getAllByRole('button', { name: /^Pénz [1-5],/ })).toHaveLength(5);
   });
+
+  it('a garázs kiürítésekor automatikusan megmutatja a továbbgombot a rakodáshoz', () => {
+    render(<App />); fireEvent.click(screen.getByRole('button', { name: /Átugrás/ }));
+    const board = screen.getByRole('group', { name: 'Garázs, 6 × 6 mező' });
+    const pieces = new Map(createGame().garage.map(piece => [piece.id, screen.getByRole('button', { name: new RegExp(`^${piece.label},`) })]));
+    const keys: Record<string, string> = { up: 'ArrowUp', down: 'ArrowDown', left: 'ArrowLeft', right: 'ArrowRight' };
+    for (const [id, direction] of solutions.expert) {
+      fireEvent.click(pieces.get(id)!);
+      fireEvent.keyDown(board, { key: keys[direction] });
+    }
+    const next = screen.getByRole('button', { name: 'Tovább a rakodáshoz →' });
+    expect(screen.getByRole('dialog', { name: 'A garázs kész!' })).toBeTruthy();
+    expect(document.activeElement).toBe(next);
+    fireEvent.keyDown(next, { key: 'Escape' });
+    expect(screen.getByRole('dialog', { name: 'A garázs kész!' })).toBeTruthy();
+    fireEvent.click(next);
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(screen.getByRole('group', { name: 'Plató, 4 × 4 mező' })).toBeTruthy();
+    expect(screen.getByText('5 raklap vár felrakásra')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Tovább a kikötőbe →' })).toBeNull();
+  }, 20000);
 });
