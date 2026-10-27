@@ -23,7 +23,7 @@ Mindkettő megoldhatóságát teljes, tesztben visszajátszott lépéssor igazol
 - Kezelés: koppintás és iránygombok, érintéses húzás, vagy a billentyűzet nyilai. Az autóknál a ferde húzás is a jármű hosszának irányát követi.
 - Az első szinten a garázs és a plató között lehet váltani a rakodáshoz. Visszavonás, újrakezdés és nehézségválasztás elérhető. A játékállás frissítéskor újraindul.
 
-A teljes játék a böngészőablakhoz igazodik, görgetés nélkül. Széles ablakban a pálya mellett külön oszlopban látszik a feladat és a vezérlés; rövid telefonos ablakban a pálya és a vezérlők osztoznak az alsó soron. A súgó és a történet lapozható. Az érintéses húzást a pálya kezeli, az ablak átméretezése megőrzi az aktuális játékállást. Ádám egyedi platós Rolls-Royce-a, a luxusautók és az aranyozott raklapok helyi SVG-grafikák.
+A teljes játék a böngészőablakhoz igazodik, görgetés nélkül. Széles ablakban a pálya mellett külön oszlopban látszik a feladat és a vezérlés; álló telefonos nézetben a pálya teljes szélességet kap, a négy iránygomb pedig közvetlenül alatta, egy sorban látszik. A súgó és a történet lapozható. Az érintéses húzást a pálya kezeli, az ablak átméretezése megőrzi az aktuális játékállást. Ádám egyedi platós Rolls-Royce-a, a luxusautók és az aranyozott raklapok helyi SVG-grafikák.
 
 ## Második pálya: kikötő és Dubaj
 

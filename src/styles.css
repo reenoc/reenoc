@@ -241,28 +241,46 @@ footer { display:none; }
 .dock-cell small { font-size:clamp(4px,1cqw,8px); letter-spacing:1px; }
 .loading-cell { display:flex; flex-direction:column; align-items:center; justify-content:center; border:1px dashed #ffe19b; border-radius:4px; background:#d9b75230; color:#ffe4a3; touch-action:none; min-width:0; min-height:0; padding:0; }
 .loading-cell>* { pointer-events:none; }.loading-cell strong { font-size:clamp(15px,5cqw,38px); font-weight:400; line-height:1; }.loading-cell small { font-size:clamp(4px,1cqw,8px); }
-/* Short portrait windows share the lower row between the board and controls. */
+/* Keep the phone board full width, with its arrows in one row underneath. */
 .truck-cab { height:clamp(24px,14cqh,76px); }
 .scene.truck { width:min(100cqw,calc(100cqh - 60px - clamp(24px,14cqh,76px))); }
-@media (max-width:549px) and (max-height:740px) {
-  :root { --pad-size:28px; }
-  .play-layout { display:grid; grid-template-columns:minmax(0,1fr) minmax(122px,43%); grid-template-rows:auto minmax(0,1fr); gap:6px; }
-  .mission-overview { grid-column:1/-1; grid-row:1; display:grid; grid-template-columns:1fr 1fr; gap:5px 8px; align-items:center; }
+@media (max-width:759px) and (orientation:portrait) {
+  .play-layout { display:flex; flex-direction:column; gap:5px; }
+  .mission-controls { width:100%; gap:4px; }
+  .play-stage { gap:0; }
+  .queue-line { display:none; }
+  .scene { width:min(100cqw,calc(100cqh - 34px)); }
+  .truck-cab { height:clamp(24px,12cqh,60px); }
+  .scene.truck { width:min(100cqw,calc(100cqh - 38px - clamp(24px,12cqh,60px))); }
+  .controls,.port-controls { flex-direction:column; align-items:stretch; gap:4px; padding:0 2px; border:0; background:none; }
+  .selection>span,.selection small { display:none; }
+  .selection strong { margin:0; font-size:10px; line-height:14px; text-align:center; white-space:nowrap; }
+  .game-shell .dpad { width:100%; grid-template-columns:repeat(4,minmax(0,1fr)); grid-template-rows:40px; gap:5px; }
+  .game-shell .dpad button { grid-row:1; min-height:40px; font-size:24px; }
+  .game-shell .dpad .left { grid-column:1; }.game-shell .dpad .up { grid-column:2; }
+  .game-shell .dpad .down { grid-column:3; }.game-shell .dpad .right { grid-column:4; }
+  .message { font-size:9px; line-height:1.35; min-height:24px; }
+  .bottom-actions { flex-direction:row; gap:8px; }
+  .bottom-actions button { flex:1; min-width:0; min-height:30px; padding:5px 6px; font-size:10px; }
+  .port-selection { display:grid; grid-template-columns:minmax(0,1fr) minmax(110px,45%); gap:2px 8px; align-items:center; }
+  .port-selection>span { display:none; }
+  .port-selection>strong { grid-column:1; grid-row:1; margin:0; font-size:11px; line-height:14px; }
+  .port-selection>small { grid-column:1; grid-row:2; font-size:8px; line-height:12px; }
+  .port-selection .port-lift { grid-column:2; grid-row:1/span 2; margin:0; min-height:32px; padding:5px; font-size:10px; }
+  .port-steering { grid-template-columns:1fr 1fr; gap:6px; }
+  .port-steering p { display:none; }.port-steering button { min-height:30px; font-size:10px; }
+}
+@media (max-width:759px) and (orientation:portrait) and (max-height:740px) {
+  .mission-overview { display:grid; grid-template-columns:1fr 1fr; gap:5px 8px; align-items:center; }
   .mission-overview h1,.mission-overview .intro,.mission-overview .scene-tabs,.mission-overview .loading-panel,.mission-overview .queue-notice { grid-column:1/-1; }
   .mission-overview .level-buttons { grid-column:1; }.mission-overview .stats { grid-column:2; padding:4px 0; }
   .mission-overview .stats>div { padding-left:4px; }.mission-overview .stats span { font-size:6px; letter-spacing:.2px; }.mission-overview .stats strong { font-size:16px; }
-  .play-stage { grid-column:1; grid-row:2; }.mission-controls { grid-column:2; grid-row:2; align-self:end; }
-  .controls,.port-controls { flex-direction:column; align-items:stretch; padding:6px; gap:6px; }
-  .dpad { align-self:center; }.selection small,.port-selection>small { font-size:8px; }.selection strong,.port-selection>strong { font-size:10px; }
-  .bottom-actions { flex-direction:column; align-items:stretch; gap:4px; }.bottom-actions button { font-size:9px; min-height:28px; }
-  .message { font-size:8px; min-height:0; }.queue-line { font-size:8px; white-space:nowrap; }
-  .port-steering { grid-template-columns:1fr 1fr; gap:4px; }.port-steering p { grid-column:1/-1; grid-row:2; font-size:7px; }.port-steering button { font-size:8px; padding:4px; }
-  .port-shell .mission-overview { grid-template-columns:minmax(0,1fr) minmax(118px,43%); }.port-shell .mission-overview h1 { grid-column:1; }.port-shell .mission-overview .intro { grid-column:1; font-size:9px; }.port-shell .mission-overview .port-brief { grid-column:1; font-size:8px; }.port-shell .mission-overview .stats { grid-column:2; grid-row:1/span 3; }
-  .port-shell .stats { grid-template-columns:1fr; gap:4px; }.port-shell .stats>div { display:flex; align-items:center; justify-content:space-between; padding:0 5px; border:0; }.port-shell .stats .jack-status { font-size:11px; line-height:1; }
-  .port-shell .stats strong { font-size:13px; margin:0; }.port-shell .stats small { font-size:9px; }
+  .port-shell .mission-overview { grid-template-columns:minmax(0,1fr) minmax(118px,43%); }
+  .port-shell .mission-overview h1 { grid-column:1; }.port-shell .mission-overview .intro { grid-column:1; font-size:9px; }.port-shell .mission-overview .port-brief { grid-column:1; font-size:8px; }
+  .port-shell .mission-overview .stats { grid-column:2; grid-row:1/span 3; grid-template-columns:1fr; gap:4px; }
+  .port-shell .stats>div { display:flex; align-items:center; justify-content:space-between; padding:0 5px; border:0; }
+  .port-shell .stats .jack-status { font-size:11px; line-height:1; }.port-shell .stats strong { font-size:13px; margin:0; }.port-shell .stats small { font-size:9px; }
 }
-
-@media (max-width:549px) and (max-height:740px) {
-  .is-complete .play-stage { display:none; }
-  .is-complete .mission-controls { grid-column:1/-1; grid-row:2; align-self:center; }
+@media (max-width:759px) and (orientation:portrait) and (max-height:650px) {
+  .game-shell .dpad { grid-template-rows:36px; }.game-shell .dpad button { min-height:36px; }
 }
